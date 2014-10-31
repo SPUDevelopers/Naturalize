@@ -6,6 +6,10 @@ For hundreds of years humans have ravaged the planet. The plants have had enough
 ### Summary
 Naturalize is a multi-platform Cocos2d-x turn based strategy game featuring the plant and human factions.
 
+### Game Assets
+In addition to the resources folder, other game assets and source files can be found here.
+https://www.dropbox.com/sh/qiy06curweev7m8/AACEbzD3dY-4glm-5PB-nJsVa?dl=0
+
 ### Setup
 1. Clone the repo to your local machine
 	```
