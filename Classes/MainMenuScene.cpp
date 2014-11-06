@@ -1,4 +1,5 @@
 #include "MainMenuScene.h"
+#include "cocostudio/CocoStudio.h"
 
 USING_NS_CC;
 
@@ -30,10 +31,6 @@ bool MainMenuScene::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
-	//mySprite = Sprite::create("newgame.png");
-	//mySprite->setPosition(Point((visibleSize.width / 2) + origin.x, (visibleSize.height /2) + origin.y));
-	//this->addChild(mySprite);
-	
 	auto startGameButtonImage = MenuItemImage::create("newGame.png", "newGame.png", CC_CALLBACK_1(MainMenuScene::startGameCallback, this));
 	auto menuCloseButtonImage = MenuItemImage::create("exitGame.png", "exitGame.png", CC_CALLBACK_1(MainMenuScene::menuCloseCallback, this));
 	
@@ -47,6 +44,9 @@ bool MainMenuScene::init()
 	auto menuCloseButtonMenu = Menu::create(menuCloseButtonImage, NULL);
 	menuCloseButtonMenu->setPosition(Point::ZERO);
 	this->addChild(menuCloseButtonMenu, 1);
+	
+	//Node *menu = cocostudio::SceneReader::getInstance()->createNodeWithSceneFile("RPGGame.json");
+	//this->addChild(menu);
 	
     return true;
 }

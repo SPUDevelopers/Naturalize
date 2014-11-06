@@ -8,6 +8,11 @@ class GameScene : public cocos2d::Layer
 public:
 	// there's no 'id' in cpp, so we recommend returning the class instance pointer
 	static cocos2d::Scene* createScene();
+	static cocos2d::TMXTiledMap map;
+	
+	void prepareLayers();
+	void createFixtures(cocos2d::TMXLayer* layer);
+	void createRectangularFixture(cocos2d::TMXLayer* layer, int x, int y, float width, float height);
 	
 	// Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
 	virtual bool init();
@@ -18,8 +23,6 @@ public:
 	// implement the "static create()" method manually
 	CREATE_FUNC(GameScene);
 	
-	cocos2d::Sprite *heroSprite;
-	cocos2d::Sprite *bgSprite;
 };
 
 #endif // __GAME_SCENE_H__

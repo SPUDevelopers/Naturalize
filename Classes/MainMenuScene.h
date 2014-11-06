@@ -20,7 +20,6 @@ public:
     // implement the "static create()" method manually
     CREATE_FUNC(MainMenuScene);
 	
-	cocos2d::Sprite *mySprite;
 };
 
 #endif // __MAINMENU_SCENE_H__

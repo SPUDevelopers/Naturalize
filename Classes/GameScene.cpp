@@ -30,16 +30,78 @@ bool GameScene::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
-	// Create background sprite
-	bgSprite = Sprite::create("menuBackground.png");
-	bgSprite->setPosition(Point((visibleSize.width / 2) + origin.x, (visibleSize.height /2) + origin.y));
-	bgSprite->setScale(visibleSize.width / bgSprite->getContentSize().width, visibleSize.height / bgSprite->getContentSize().height);
-	this->addChild(bgSprite);
+	// Create a tmx map
+	this->map = TMXTiledMap::create("forest.tmx");
+	addChild(map, 0, -1);
 	
-	// Create hero sprite
-	heroSprite = Sprite::create("potatoHero.png");
-	heroSprite->setPosition(Point((visibleSize.width / 2) + origin.x, (visibleSize.height /2) + origin.y));
-	this->addChild(heroSprite);
+	// all tiles are aliased by default, let's set them anti-aliased
+	for (const auto& child : map->getChildren())
+	{
+		static_cast<SpriteBatchNode*>(child)->getTexture()->setAntiAliasTexParameters();
+	}
 	
-	return true;
+}
+
+void GameScene::prepareLayers()
+{
+	for (auto& object : this->map->getChildren())
+	{
+		// is this map child a tile layer?
+		auto layer = dynamic_cast<TMXLayer*>(object);
+		if (layer != nullptr)
+			this->createFixtures(layer);
+	}
+}
+
+void GameScene::createFixtures(TMXLayer* layer)
+{
+	// create all the rectangular fixtures for each tile
+	Size layerSize = layer->getLayerSize();
+	for (int y = 0; y < layerSize.height; y++)
+	{
+		for (int x = 0; x < layerSize.width; x++)
+		{
+			// create a fixture if this tile has a sprite
+			auto tileSprite = layer->getTileAt(Point(x, y));
+			if (tileSprite)
+				this->createRectangularFixture(layer, x, y, 1.1f, 1.1f);
+		}
+	}
+}
+
+void GameScene::createRectangularFixture(TMXLayer* layer, int x, int y, float width, float height)
+{
+	// get position & size
+	auto p = layer->getPositionAt(Point(x,y));
+	auto tileSize = this->map->getTileSize();
+	const float pixelsPerMeter = 32.0f;
+	
+	// note: creating the 'world' member variable
+	// is discussed in the next chapter
+	
+	// create the body
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_staticBody;
+	bodyDef.position.Set(
+						 (p.x + (tileSize.width / 2.0f)) / pixelsPerMeter,
+						 (p.y + (tileSize.height / 2.0f)) / pixelsPerMeter
+						 );
+	b2Body* body = world->CreateBody(&bodyDef);
+	
+	// define the shape
+	b2PolygonShape shape;
+	shape.SetAsBox(
+				   (tileSize.width / pixelsPerMeter) * 0.5f * width,
+				   (tileSize.width / pixelsPerMeter) * 0.5f * height
+				   );
+	
+	// create the fixture
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &shape;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.3f;
+	fixtureDef.restitution = 0.0f;
+	fixtureDef.filter.categoryBits = kFilterCategoryLevel;
+	fixtureDef.filter.maskBits = 0xffff;
+	body->CreateFixture(&fixtureDef);
 }
