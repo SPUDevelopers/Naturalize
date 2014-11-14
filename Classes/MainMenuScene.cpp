@@ -31,8 +31,8 @@ bool MainMenuScene::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
-	auto startGameButtonImage = MenuItemImage::create("newGame.png", "newGame.png", CC_CALLBACK_1(MainMenuScene::startGameCallback, this));
-	auto menuCloseButtonImage = MenuItemImage::create("exitGame.png", "exitGame.png", CC_CALLBACK_1(MainMenuScene::menuCloseCallback, this));
+	auto startGameButtonImage = MenuItemImage::create("desktop\\newGame.png", "desktop\\newGame.png", CC_CALLBACK_1(MainMenuScene::startGameCallback, this));
+	auto menuCloseButtonImage = MenuItemImage::create("desktop\\exitGame.png", "desktop\\exitGame.png", CC_CALLBACK_1(MainMenuScene::menuCloseCallback, this));
 	
 	startGameButtonImage->setPosition(Point((visibleSize.width / 2) + origin.x, (visibleSize.height) - (visibleSize.height/3)));
 	menuCloseButtonImage->setPosition(Point((visibleSize.width / 2) + origin.x, (visibleSize.height /3) + origin.y));
