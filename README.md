@@ -23,3 +23,5 @@ https://www.dropbox.com/sh/qiy06curweev7m8/AACEbzD3dY-4glm-5PB-nJsVa?dl=0
 3. Open the approperate project folder (proj.ios_mac/Naturalize.xcodeproj on a Mac) or (proj.win32/Naturalize.vcxproj on Windows).
 
 4. Build and run the application in your IDE (Make sure to select the correct target)
+
+5. Everyone breakdance

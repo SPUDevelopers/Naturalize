@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="128" tileheight="128">
+ <tileset firstgid="1" name="Ground" tilewidth="128" tileheight="128">
+  <tile id="0">
+   <image width="128" height="128" source="tiles/tile0.png"/>
+  </tile>
+  <tile id="1">
+   <image width="128" height="128" source="tiles/tile1.png"/>
+  </tile>
+  <tile id="2">
+   <image width="128" height="128" source="tiles/tile2.png"/>
+  </tile>
+  <tile id="3">
+   <image width="128" height="128" source="tiles/tile3.png"/>
+  </tile>
+  <tile id="4">
+   <image width="128" height="128" source="tiles/tile4.png"/>
+  </tile>
+  <tile id="5">
+   <image width="128" height="128" source="tiles/tile5.png"/>
+  </tile>
+  <tile id="6">
+   <image width="128" height="128" source="tiles/tile6.png"/>
+  </tile>
+  <tile id="7">
+   <image width="128" height="128" source="tiles/tile7.png"/>
+  </tile>
+  <tile id="8">
+   <image width="128" height="128" source="tiles/tile8.png"/>
+  </tile>
+  <tile id="9">
+   <image width="128" height="128" source="tiles/tile9.png"/>
+  </tile>
+  <tile id="10">
+   <image width="128" height="128" source="tiles/tile10.png"/>
+  </tile>
+ </tileset>
+ <layer name="Tile Layer 1" width="10" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYARiJiBmRmIji7EAMRsUswMxBxIbWYwTiz5WHGLo+rhwiA2Ueeh8XOah82F60M3EZgcnFjMBfOsB/g==
+  </data>
+ </layer>
+</map>
