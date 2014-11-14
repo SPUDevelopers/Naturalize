@@ -2,37 +2,37 @@
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="128" tileheight="128">
  <tileset firstgid="1" name="Ground" tilewidth="128" tileheight="128">
   <tile id="0">
-   <image width="128" height="128" source="tile0.png"/>
+   <image width="128" height="128" source="tiles/tile0.png"/>
   </tile>
   <tile id="1">
-   <image width="128" height="128" source="tile1.png"/>
+   <image width="128" height="128" source="tiles/tile1.png"/>
   </tile>
   <tile id="2">
-   <image width="128" height="128" source="tile2.png"/>
+   <image width="128" height="128" source="tiles/tile2.png"/>
   </tile>
   <tile id="3">
-   <image width="128" height="128" source="tile3.png"/>
+   <image width="128" height="128" source="tiles/tile3.png"/>
   </tile>
   <tile id="4">
-   <image width="128" height="128" source="tile4.png"/>
+   <image width="128" height="128" source="tiles/tile4.png"/>
   </tile>
   <tile id="5">
-   <image width="128" height="128" source="tile5.png"/>
+   <image width="128" height="128" source="tiles/tile5.png"/>
   </tile>
   <tile id="6">
-   <image width="128" height="128" source="tile6.png"/>
+   <image width="128" height="128" source="tiles/tile6.png"/>
   </tile>
   <tile id="7">
-   <image width="128" height="128" source="tile7.png"/>
+   <image width="128" height="128" source="tiles/tile7.png"/>
   </tile>
   <tile id="8">
-   <image width="128" height="128" source="tile8.png"/>
+   <image width="128" height="128" source="tiles/tile8.png"/>
   </tile>
   <tile id="9">
-   <image width="128" height="128" source="tile9.png"/>
+   <image width="128" height="128" source="tiles/tile9.png"/>
   </tile>
   <tile id="10">
-   <image width="128" height="128" source="tile10.png"/>
+   <image width="128" height="128" source="tiles/tile10.png"/>
   </tile>
  </tileset>
  <layer name="Tile Layer 1" width="10" height="10">
