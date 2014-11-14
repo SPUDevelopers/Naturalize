@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "cocostudio/CocoStudio.h"
 
 USING_NS_CC;
 
@@ -31,7 +32,7 @@ bool GameScene::init()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
 	// Create a tmx map
-	this->map = TMXTiledMap::create("field.tmx");
+	this->map = TMXTiledMap::create("maps\\field\\field.tmx");
 	this->addChild(map, 0, -1);
 	
 	// all tiles are aliased by default, let's set them anti-aliased
@@ -40,4 +41,5 @@ bool GameScene::init()
 		static_cast<SpriteBatchNode*>(child)->getTexture()->setAntiAliasTexParameters();
 	}
 	
+	return true;
 }
