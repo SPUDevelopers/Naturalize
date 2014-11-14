@@ -17,9 +17,12 @@ public:
 	// a selector callback
 	void menuCloseCallback(cocos2d::Ref* pSender);
 	
+	// Update method
+	void update(float delta);
+
 	// implement the "static create()" method manually
 	CREATE_FUNC(GameScene);
-	
+
 };
 
 #endif // __GAME_SCENE_H__

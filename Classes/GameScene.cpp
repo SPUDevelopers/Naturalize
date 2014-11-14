@@ -32,7 +32,8 @@ bool GameScene::init()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
 	// Create a tmx map
-	this->map = TMXTiledMap::create("maps/field/field.tmx");
+	this->map = TMXTiledMap::create("maps/field/desert.tmx");
+	this->map->setScale(2, 2);
 	this->addChild(map, 0, -1);
 	
 	// all tiles are aliased by default, let's set them anti-aliased
@@ -41,5 +42,40 @@ bool GameScene::init()
 		static_cast<SpriteBatchNode*>(child)->getTexture()->setAntiAliasTexParameters();
 	}
 	
+	// Schedule update
+	scheduleUpdate();
+
+	setKeyboardEnabled(true);
+
 	return true;
+}
+
+void GameScene::update(float delta)
+{
+	// Doing input here is bad! Use event handlers instead...
+
+	float x, y;
+	map->getPosition(&x, &y);
+
+	float speed = 100;
+
+	if (GetKeyState(VK_RIGHT) & 0x8000)
+	{
+		x += delta * speed;
+	}
+	else if (GetKeyState(VK_LEFT) & 0x8000)
+	{
+		x -= delta * speed;
+	}
+
+	if (GetKeyState(VK_UP) & 0x8000)
+	{
+		y += delta * speed;
+	}
+	else if (GetKeyState(VK_DOWN) & 0x8000)
+	{
+		y -= delta * speed;
+	}
+
+	map->setPosition(x, y);
 }
