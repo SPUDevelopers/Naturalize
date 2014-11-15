@@ -19,10 +19,12 @@ Scene* GameScene::createScene()
 }
 
 // on "init" you need to initialize your instance
+
+#pragma mark - GAMESCENE INIT
+
 bool GameScene::init()
 {
-	//////////////////////////////
-	// 1. super init first
+	// Super init
 	if ( !Layer::init() )
 	{
 		return false;
@@ -31,51 +33,107 @@ bool GameScene::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
-	// Create a tmx map
-	this->map = TMXTiledMap::create("maps/field/desert.tmx");
+	// Create a tmx tile map
+	this->map = TMXTiledMap::create("maps/desert/desert.tmx");
 	this->map->setScale(2, 2);
 	this->addChild(map, 0, -1);
 	
-	// all tiles are aliased by default, let's set them anti-aliased
+	//TMXObjectGroup *objectGroup = this->map->objectGroupNamed("objects");
+	//ValueMap object = objectGroup->objectNamed("bush");
+	//this->addChild(object, 0, 0);
+	
+	// All tiles are aliased by default: set them anti-aliased
 	for (const auto& child : map->getChildren())
 	{
 		static_cast<SpriteBatchNode*>(child)->getTexture()->setAntiAliasTexParameters();
 	}
 	
-	// Schedule update
-	scheduleUpdate();
-
-	setKeyboardEnabled(true);
+	#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+	// Set up keyboard listener
+	auto keyboardListener = EventListenerKeyboard::create();
+	keyboardListener->onKeyPressed = CC_CALLBACK_2(GameScene::keyPressed, this);
+	keyboardListener->onKeyReleased = CC_CALLBACK_2(GameScene::keyReleased, this);
+	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(keyboardListener, this);
+	#endif
+	
+	#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+	// Set up touchscreen listener
+	auto touchscreenListener = EventListenerTouchAllAtOnce::create();
+	touchscreenListener->onTouchesBegan = CC_CALLBACK_2(GameScene::onTouchesBegan, this);
+	touchscreenListener->onTouchesMoved = CC_CALLBACK_2(GameScene::onTouchesMoved, this);
+	touchscreenListener->onTouchesEnded = CC_CALLBACK_2(GameScene::onTouchesEnded, this);
+	touchscreenListener->onTouchesCancelled = CC_CALLBACK_2(GameScene::onTouchesCancelled, this);
+	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touchscreenListener, this);
+	#endif
 
 	return true;
 }
 
-void GameScene::update(float delta)
+#pragma mark - SCENE UPDATE
+
+void GameScene::update(Vec2 position)
 {
-	// Doing input here is bad! Use event handlers instead...
 
-	float x, y;
-	map->getPosition(&x, &y);
+	this->map->setPosition(this->map->getPosition() + position);
+	
+}
 
-	float speed = 100;
+#pragma mark - CONTROL EVENTS
 
-	if (GetKeyState(VK_RIGHT) & 0x8000)
+void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event)
+{
+	log("keyPressed");
+	
+	if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
 	{
-		x += delta * speed;
+		log("UP_ARROW was pressed");
+		Vec2 position = Vec2(0, -1 * this->panSpeed);
+		GameScene::update(position);
 	}
-	else if (GetKeyState(VK_LEFT) & 0x8000)
+	if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
 	{
-		x -= delta * speed;
+		log("DOWN_ARROW was pressed");
+		Vec2 position = Vec2(0, 1 * this->panSpeed);
+		GameScene::update(position);
 	}
+	if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
+	{
+		log("LEFT_ARROW was pressed");
+		Vec2 position = Vec2(1 * this->panSpeed, 0);
+		GameScene::update(position);
+	}
+	if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
+	{
+		log("RIGHT_ARROW was pressed");
+		Vec2 position = Vec2(-1 * this->panSpeed, 0);
+		GameScene::update(position);
+	}
+}
 
-	if (GetKeyState(VK_UP) & 0x8000)
-	{
-		y += delta * speed;
-	}
-	else if (GetKeyState(VK_DOWN) & 0x8000)
-	{
-		y -= delta * speed;
-	}
+void GameScene::keyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event)
+{
+	log("keyReleased");
+}
 
-	map->setPosition(x, y);
+void GameScene::onTouchesBegan(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)
+{
+	log("touchesBegan");
+}
+
+void GameScene::onTouchesMoved(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)
+{
+	log("touchesMoved");
+	
+	auto touch = *touches.begin();
+	GameScene::update(touch->getDelta());
+}
+
+void GameScene::onTouchesEnded(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)
+{
+	log("touchesEnded");
+}
+
+void GameScene::onTouchesCancelled(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)
+{
+	log("touchesCancelled");
 }
