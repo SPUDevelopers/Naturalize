@@ -1,7 +1,7 @@
 Naturalize
 ==========
 
-For hundreds of years humans have ravaged the planet. The plants have had enough.
+For hundreds of years, humans have ravaged the planet. The plants have had enough.
 
 ### Summary
 Naturalize is a multi-platform Cocos2d-x turn based strategy game featuring the plant and human factions.
