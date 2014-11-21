@@ -34,8 +34,8 @@ bool GameScene::init()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
 	// Create a tmx tile map
-	this->map = TMXTiledMap::create("maps/desert/desert.tmx");
-	this->map->setScale(2, 2);
+	this->map = TMXTiledMap::create("maps/test/test.tmx");
+	this->map->setScale(1, 1);
 	this->addChild(map, 0, -1);
 	
 	//TMXObjectGroup *objectGroup = this->map->objectGroupNamed("objects");
