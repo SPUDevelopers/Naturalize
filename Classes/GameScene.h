@@ -21,7 +21,10 @@ public:
 	void menuCloseCallback(cocos2d::Ref* pSender);
 	
 	// Update method
-	void update(cocos2d::Vec2 position);
+	void update(float delta);
+
+	// Map movement method
+	void moveMap(cocos2d::Vec2 position);
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(GameScene);
