@@ -3,9 +3,20 @@
  <tileset firstgid="1" name="tileset" tilewidth="128" tileheight="128">
   <image source="test_tiles.png" width="256" height="128"/>
  </tileset>
- <layer name="Tile Layer 1" width="32" height="32">
+ <tileset firstgid="3" name="lumberjack" tilewidth="150" tileheight="150">
+  <image source="lumberjack.png" width="150" height="150"/>
+ </tileset>
+ <tileset firstgid="4" name="trees" tilewidth="150" tileheight="150">
+  <image source="tree.png" width="150" height="150"/>
+ </tileset>
+ <layer name="background" width="32" height="32">
   <data encoding="base64" compression="zlib">
-   eJzNlkESwCAIA9X/P7rXTqcK0QU8eDSJJAK9tdYLzyjmv0HDuECDR8cIOLf5Qb6DyKEXn9C98iPaEwufrvMXz8NPZHPmsXJvV8Mu96kG6q+rfkXk1spB1V/JnCFvrorZRXqrYtB9X8nxX7+O6EcKNs2vvonkP+mrUT5k3KfnanbtZphWtjP6mLovErslvacSuyWdNcXviMwRM+Bk9lC1ewDIgwS7
+   eJzlllEOADAEQ233P/QuYMuEUvHhU/RRYovILo5VFFr9TD0e/t+8Fx9j/y28Xu2d+BH+YOVHaor2vyeftf/oGXj4I3Ux979zfctNz+K/3Zku+4+aE8v+V/hgkv8R9af8X1E7qv3ibPwWPVPmj65fGQfQSASX
+  </data>
+ </layer>
+ <layer name="foreground" width="32" height="32">
+  <data encoding="base64" compression="zlib">
+   eJzt0ssKACAIRFEh//+b2wcliC/inlUrlWlEAMBHuw8AHrz9pNd2BmRUrytz/jrftIyn3fMzvbwj5kU7Z2ftqurfKtoz0QZKowBA
   </data>
  </layer>
 </map>

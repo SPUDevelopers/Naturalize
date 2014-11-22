@@ -39,7 +39,8 @@ bool GameScene::init()
 	this->addChild(map, 0, -1);
 	
 	//TMXObjectGroup *objectGroup = this->map->objectGroupNamed("objects");
-	//ValueMap object = objectGroup->objectNamed("bush");
+	//ValueMap object = objectGroup->objectNamed("lumberjack");
+	//auto description = object[0].;
 	//this->addChild(object, 0, 0);
 	
 	// All tiles are aliased by default: set them anti-aliased
@@ -81,14 +82,35 @@ void GameScene::update(float delta)
 {
 	log("Delta: %f FPS: %f", delta, 1 / delta);
 
-	// TODO: Game loop code goes here
+	// Game loop code goes here
+	
 }
 
 #pragma mark - MOVE MAP
 
-void GameScene::moveMap(Vec2 position)
+void GameScene::moveMap(char direction)
 {
-	this->map->setPosition(this->map->getPosition() + position);
+	Vec2 mapPosition = this->map->getPosition();
+	Vec2 movePosition = Vec2(0, 0);
+	
+	Size mapSize = this->map->getMapSize();
+	Size windowSize = Director::getInstance()->getVisibleSize();
+	
+	// Check for being at map bounderies and return direction "n"
+	if (mapPosition.y > -128 && direction == 'd') direction = 'n';
+	if (mapPosition.x > -128 && direction == 'l') direction = 'n';
+	if (mapPosition.y < ((-128 * (mapSize.height - 1)) + windowSize.height) && direction == 'u') direction = 'n';
+	if (mapPosition.x < ((-128 * (mapSize.width - 1)) + windowSize.width) && direction == 'r') direction = 'n';
+	
+	// Set move position
+	if (direction == 'u') movePosition = Vec2(0, -128);
+	else if (direction == 'd') movePosition = Vec2(0, 128);
+	else if (direction == 'l') movePosition = Vec2(128, 0);
+	else if (direction == 'r') movePosition = Vec2(-128, 0);
+	else log("Map Boundary Reached");
+
+	MoveBy* mapMove = MoveBy::create(0.2, movePosition);
+	this->map->runAction(Repeat::create(mapMove, 1));
 }
 
 #pragma mark - CONTROL EVENTS
@@ -100,26 +122,22 @@ void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 	if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
 	{
 		log("UP_ARROW was pressed");
-		Vec2 position = Vec2(0, -1 * this->panSpeed);
-		this->moveMap(position);
+		this->moveMap('u');
 	}
 	if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
 	{
 		log("DOWN_ARROW was pressed");
-		Vec2 position = Vec2(0, 1 * this->panSpeed);
-		this->moveMap(position);
+		this->moveMap('d');
 	}
 	if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
 	{
 		log("LEFT_ARROW was pressed");
-		Vec2 position = Vec2(1 * this->panSpeed, 0);
-		this->moveMap(position);
+		this->moveMap('l');
 	}
 	if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
 	{
 		log("RIGHT_ARROW was pressed");
-		Vec2 position = Vec2(-1 * this->panSpeed, 0);
-		this->moveMap(position);
+		this->moveMap('r');
 	}
 }
 
@@ -138,7 +156,7 @@ void GameScene::onTouchesMoved(const std::vector<cocos2d::Touch*> &touches, coco
 	log("touchesMoved");
 	
 	auto touch = *touches.begin();
-	this->moveMap(touch->getDelta());
+	//this->moveMap(touch->getDelta());
 }
 
 void GameScene::onTouchesEnded(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)

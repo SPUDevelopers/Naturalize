@@ -9,7 +9,6 @@ public:
 	
 	// Public class variables
 	cocos2d::TMXTiledMap* map;
-	float panSpeed = 10;
 	
 	// there's no 'id' in cpp, so we recommend returning the class instance pointer
 	static cocos2d::Scene* createScene();
@@ -24,7 +23,7 @@ public:
 	void update(float delta);
 
 	// Map movement method
-	void moveMap(cocos2d::Vec2 position);
+	void moveMap(char direction);
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(GameScene);
