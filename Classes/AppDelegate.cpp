@@ -28,7 +28,12 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto glview = director->getOpenGLView();
     if(!glview) {
         glview = GLViewImpl::create("Naturalize");
-        director->setOpenGLView(glview);
+		
+		#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+		glview->setFrameSize(1024, 768);
+		#endif
+		
+		director->setOpenGLView(glview);
     }
 
     // turn on display FPS
