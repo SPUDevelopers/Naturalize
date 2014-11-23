@@ -34,6 +34,12 @@
     <ClCompile Include="..\Classes\Unit.cpp">
       <Filter>GameScene</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\TileMgr.cpp">
+      <Filter>GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MapTile.cpp">
+      <Filter>GameScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -50,6 +56,12 @@
       <Filter>GameScene</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Unit.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TileMgr.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MapTile.h">
       <Filter>GameScene</Filter>
     </ClInclude>
   </ItemGroup>

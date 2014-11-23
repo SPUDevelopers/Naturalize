@@ -9,6 +9,7 @@ enum GameSceneState
 {
 	GAMESTATE_SELECT = 0,	// Inital unit selectio
 	GAMESTATE_ACTION,		// Unit selected, action menu
+	GAMESTATE_TARGET,		// Select target for action
 	GAMESTATE_WAIT			// Waiting for animation/movement
 };
 
@@ -50,6 +51,7 @@ public:
 	// State-specific routines (to separate implementations)
 	void updateSelectState(float delta);
 	void updateActionState(float delta);
+	void updateTargetState(float delta);
 	void updateWaitState(float delta);
 
 	/////////////////////////////////////////////////////////////////////////
