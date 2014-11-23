@@ -69,7 +69,7 @@ public:
 	// Map
 
 	// Map movement method
-	void moveMap(cocos2d::Vec2 position);
+	void moveMap(char direction);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Callbacks

@@ -82,8 +82,37 @@ void GameScene::update(float delta)
 {
 	log("Delta: %f FPS: %f", delta, 1 / delta);
 
-	// Game loop code goes here
-	
+	// Call state-specific update methods
+	switch (cur_state)
+	{
+	default:
+		log("Bad state: %d", cur_state);
+		cur_state = GAMESTATE_SELECT;
+	case GAMESTATE_SELECT:
+		updateSelectState(delta);
+		break;
+	case GAMESTATE_ACTION:
+		updateActionState(delta);
+		break;
+	case GAMESTATE_WAIT:
+		updateWaitState(delta);
+		break;
+	}
+}
+
+void GameScene::updateSelectState(float delta)
+{
+
+}
+
+void GameScene::updateActionState(float delta)
+{
+
+}
+
+void GameScene::updateWaitState(float delta)
+{
+
 }
 
 #pragma mark - MOVE MAP
