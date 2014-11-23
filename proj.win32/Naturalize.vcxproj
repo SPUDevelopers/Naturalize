@@ -138,19 +138,23 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
+    <ClCompile Include="..\Classes\Cursor.cpp" />
     <ClCompile Include="..\Classes\GameScene.cpp" />
     <ClCompile Include="..\Classes\MainMenuScene.cpp" />
-    <ClCompile Include="Cursor.cpp" />
+    <ClCompile Include="..\Classes\MapTile.cpp" />
+    <ClCompile Include="..\Classes\TileMgr.cpp" />
+    <ClCompile Include="..\Classes\Unit.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
+    <ClInclude Include="..\Classes\Cursor.h" />
     <ClInclude Include="..\Classes\GameScene.h" />
     <ClInclude Include="..\Classes\MainMenuScene.h" />
-    <ClInclude Include="Cursor.h" />
+    <ClInclude Include="..\Classes\MapTile.h" />
+    <ClInclude Include="..\Classes\TileMgr.h" />
+    <ClInclude Include="..\Classes\Unit.h" />
     <ClInclude Include="main.h" />
-    <ClInclude Include="Unit.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cocos2d\cocos\2d\libcocos2d.vcxproj">

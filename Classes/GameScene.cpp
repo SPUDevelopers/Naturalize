@@ -71,6 +71,9 @@ bool GameScene::init()
 	Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(touchscreenListener, this);
 #endif
 
+	// Initialize game state
+	cur_state = GAMESTATE_SELECT;
+
 	this->scheduleUpdate();
 
 	return true;
@@ -82,8 +85,42 @@ void GameScene::update(float delta)
 {
 	log("Delta: %f FPS: %f", delta, 1 / delta);
 
-	// Game loop code goes here
+	// Call state-specific update methods
+	switch (cur_state)
+	{
+	default:
+		log("Bad state: %d", cur_state);
+		cur_state = GAMESTATE_SELECT;
+	case GAMESTATE_SELECT:
+		updateSelectState(delta);
+		break;
+	case GAMESTATE_ACTION:
+		updateActionState(delta);
+		break;
+	case GAMESTATE_WAIT:
+		updateWaitState(delta);
+		break;
+	}
+}
+
+void GameScene::updateSelectState(float delta)
+{
 	
+}
+
+void GameScene::updateActionState(float delta)
+{
+
+}
+
+void GameScene::updateTargetState(float delta)
+{
+
+}
+
+void GameScene::updateWaitState(float delta)
+{
+
 }
 
 #pragma mark - MOVE MAP
@@ -119,25 +156,36 @@ void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 {
 	log("keyPressed");
 	
-	if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
+	if (GAMESTATE_SELECT == cur_state)
 	{
-		log("UP_ARROW was pressed");
-		this->moveMap('u');
-	}
-	if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
-	{
-		log("DOWN_ARROW was pressed");
-		this->moveMap('d');
-	}
-	if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
-	{
-		log("LEFT_ARROW was pressed");
-		this->moveMap('l');
-	}
-	if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
-	{
-		log("RIGHT_ARROW was pressed");
-		this->moveMap('r');
+		if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
+		{
+			log("UP_ARROW was pressed");
+			this->moveMap('u');
+
+			this->cursor.move(0, 1);
+		}
+		if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
+		{
+			log("DOWN_ARROW was pressed");
+			this->moveMap('d');
+
+			this->cursor.move(0, -1);
+		}
+		if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
+		{
+			log("LEFT_ARROW was pressed");
+			this->moveMap('l');
+
+			this->cursor.move(-1, 0);
+		}
+		if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
+		{
+			log("RIGHT_ARROW was pressed");
+			this->moveMap('r');
+
+			this->cursor.move(1, 0);
+		}
 	}
 }
 

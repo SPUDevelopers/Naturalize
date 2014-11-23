@@ -28,10 +28,16 @@
     <ClCompile Include="..\Classes\GameScene.cpp">
       <Filter>GameScene</Filter>
     </ClCompile>
-    <ClCompile Include="Unit.cpp">
+    <ClCompile Include="..\Classes\Cursor.cpp">
       <Filter>GameScene</Filter>
     </ClCompile>
-    <ClCompile Include="Cursor.cpp">
+    <ClCompile Include="..\Classes\Unit.cpp">
+      <Filter>GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\TileMgr.cpp">
+      <Filter>GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\MapTile.cpp">
       <Filter>GameScene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -46,10 +52,16 @@
     <ClInclude Include="..\Classes\GameScene.h">
       <Filter>GameScene</Filter>
     </ClInclude>
-    <ClInclude Include="Unit.h">
+    <ClInclude Include="..\Classes\Cursor.h">
       <Filter>GameScene</Filter>
     </ClInclude>
-    <ClInclude Include="Cursor.h">
+    <ClInclude Include="..\Classes\Unit.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\TileMgr.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\MapTile.h">
       <Filter>GameScene</Filter>
     </ClInclude>
   </ItemGroup>
