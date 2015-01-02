@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="128">
+ <properties>
+  <property name="tiledefs" value="tileset1.xml"/>
+ </properties>
  <tileset firstgid="1" name="tileset" tilewidth="128" tileheight="128">
   <image source="test_tiles.png" width="256" height="128"/>
+  <tile id="0">
+   <properties>
+    <property name="name" value="grass"/>
+   </properties>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="name" value="plains"/>
+   </properties>
+  </tile>
  </tileset>
  <tileset firstgid="3" name="lumberjack" tilewidth="150" tileheight="150">
   <image source="lumberjack.png" width="150" height="150"/>
