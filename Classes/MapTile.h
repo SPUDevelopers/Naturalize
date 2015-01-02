@@ -1,12 +1,41 @@
+//
+//  MapTile.h
+//
+//  Created by Evan McNulty on 12/21/14.
+//
+
 #ifndef __MAPTILE_H__
 #define __MAPTILE_H__
 
-// Class that represents a tile type, with corresponding tile stats.
+#include "cocos2d.h"
+
+using namespace cocos2d;
+
+// The Tile class basically holds a bunch of tile attributes and stat for a
+// given type of tile. For example, a field tile may have high visibility
+// stat, low movement penalty, but a low defense buff, stuff like that.
+// Attributes and methods should follow the Naturalize documentation.
 class MapTile
 {
 public:
-	MapTile();
-	~MapTile();
+    MapTile();
+    ~MapTile();
+    
+    // Returns a value to affect damage done by a unit
+    // Based on int[unit.faction] where unit.faction = for human, 1 for plant
+    // Values can be negative
+	const int atkBuf[2] = { 0 };
+    
+    // Returns a value to affect damage done to a unit
+    // Based on int[unit.faction] where unit.faction = for human, 1 for plant
+    // Values can be negative
+	const int defBuf[2] = { 0 };
+    
+    // Movement cost for tiles of a certain type int[tile.type]
+    // Tile type mapping to be determined, 6 at the moment
+    // Movement ability is calculated by unit movement available - moveCost
+	const int moveCost[6] = { 0 }; //TODO: determine actual array size
+
 };
 
 #endif
