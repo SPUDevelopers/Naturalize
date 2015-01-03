@@ -18,7 +18,10 @@ TileMgr::~TileMgr()
 
 bool TileMgr::init(const std::string &tmxFile, cocos2d::TMXTiledMap *tmxMap)
 {
-	if (nullptr == tmxMap) return false; // Invalid pointer
+	if (nullptr == tmxMap)
+	{
+		return false; // Invalid pointer
+	}
 
 	// Cache Tiled map pointer
 	this->tmxMap = tmxMap;
@@ -235,18 +238,45 @@ bool TileMgr::setTileMoveCost(const std::string &typeName, const int value, MapT
 
 MapTile TileMgr::getTileFromXY(cocos2d::Point pt)
 {
-	return getTileFromXY(pt.x, pt.y);
+	if (nullptr == this->tmxMap)
+	{
+		log("Missing TMX pointer!");
+		return MapTile(); // Return default tile
+	}
+
+	//
+	//	Retrieve GID of tile
+	//
+	
+	// Only look at tiles from background layer (Layer 0)
+	int gid = this->tmxMap->getLayer("background")->getTileGIDAt(pt);
+
+	cocos2d::ValueMap properties = this->tmxMap->getPropertiesForGID(gid).asValueMap();
+
+	if (!properties.size())
+	{
+		log("Failed to obtain tile properties!");
+		return MapTile(); // Return default tile
+	}
+
+	//
+	//	Get name of tile
+	//
+
+	std::string tilename = properties["name"].asString();
+
+	if (!tilename.length())
+	{
+		log("Failed to obtain tile name!");
+		return MapTile();
+	}
+
+	return getTileFromType(tilename); // Get tile from type name
 }
 
 MapTile TileMgr::getTileFromXY(int x, int y)
 {
-	std::string tilename;
-	
-	// TODO: Also, to grab a specific tile attribute, get the GID from the tile, then
-	//		 match that up with a specific tile to get the tile name, which is used to
-	//		 reference internally.
-
-	return getTileFromType(tilename);
+	return getTileFromXY(cocos2d::Point(x, y));
 }
 
 MapTile TileMgr::getTileFromType(const std::string &tilename)
