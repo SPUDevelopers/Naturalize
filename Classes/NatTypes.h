@@ -22,15 +22,8 @@ namespace Naturalize
 		FACTION_COUNT
 	};
 
-	FactionType GetFactionFromString(std::string name)
-	{
-		return FACTION_UNKNOWN;
-	}
-
-	std::string GetStringFromFaction(FactionType faction)
-	{
-		return "";
-	}
+	FactionType GetFactionFromString(std::string name);
+	std::string GetStringFromFaction(FactionType faction);
 
 //
 //	Movement
@@ -40,22 +33,16 @@ namespace Naturalize
 	{
 		MOVETYPE_UNKNOWN  = -1,
 		MOVETYPE_INFANTRY =  0,
-		MOVETYPE_AERIAL,
 		MOVETYPE_VEHICLE,
+		MOVETYPE_FLYING,
 		// ...
 		// ^^^ Other definitions go here ^^^
 		MOVETYPE_COUNT
 	};
 
-	MoveType GetMoveTypeFromString(std::string name)
-	{
-		return MOVETYPE_UNKNOWN;
-	}
+	MoveType GetMoveTypeFromString(std::string name);
+	std::string GetStringFromMoveType(MoveType movetype);
 
-	std::string GetStringFromMoveType(MoveType movetype)
-	{
-		return "";
-	}
 };
 
 #endif
