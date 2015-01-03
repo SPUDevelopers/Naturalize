@@ -4,12 +4,16 @@
 #include "StringHelpers.h"
 #include "tinyxml2/tinyxml2.h"
 
-TileMgr::TileMgr()
+TileMgr::TileMgr() :
+	tmxMap(nullptr),
+	tmxMapInfo(nullptr)
 {
 }
 
 TileMgr::~TileMgr()
 {
+	this->tileDefs.clear();
+	cleanup();
 }
 
 bool TileMgr::init(const std::string &tmxFile, cocos2d::TMXTiledMap *tmxMap)
@@ -70,7 +74,7 @@ bool TileMgr::loadTileset(const std::string &filename)
 	}
 
 	// Clear tile definition list
-	tileDefs.clear();
+	this->tileDefs.clear();
 
 	// Get tileset element
 	tinyxml2::XMLElement *tileset = doc.FirstChildElement("tileset");
@@ -87,9 +91,9 @@ bool TileMgr::loadTileset(const std::string &filename)
 		tileName = StringToLower(tileName); // Convert to lowercase
 
 		// Check if tile exists, if so, skip it!
-		TileDefinitions::iterator temp_it = tileDefs.find(tileName);
+		TileDefinitions::iterator temp_it = this->tileDefs.find(tileName);
 
-		if (temp_it != tileDefs.end())
+		if (temp_it != this->tileDefs.end())
 		{
 			log("Found duplicate tile definition \"%s\". Skipping...", tileName);
 			continue;
@@ -155,11 +159,11 @@ bool TileMgr::loadTileset(const std::string &filename)
 		//	Add tile to definition map
 		//
 
-		tileDefs[tileName] = newTile;
+		this->tileDefs[tileName] = newTile;
 		++numOfSuccesses;
 	}
 
-	if (tileDefs.empty())
+	if (this->tileDefs.empty())
 	{
 		log("No definitions were loaded.");
 		return false;
@@ -250,9 +254,9 @@ MapTile TileMgr::getTileFromType(const std::string &tilename)
 	std::string lowerName = StringToLower(tilename); // Convert to lowercase
 
 	// Find tile in definition set
-	TileDefinitions::iterator it = tileDefs.find(lowerName);
+	TileDefinitions::iterator it = this->tileDefs.find(lowerName);
 
-	if (it == tileDefs.end())
+	if (it == this->tileDefs.end())
 	{
 		log("Could not find tile definition for tile: %s", tilename);
 		return MapTile(); // Return default tile
@@ -263,5 +267,5 @@ MapTile TileMgr::getTileFromType(const std::string &tilename)
 
 int TileMgr::getCount()
 {
-	return tileDefs.size();
+	return this->tileDefs.size();
 }
