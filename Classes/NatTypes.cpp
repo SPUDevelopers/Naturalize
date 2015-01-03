@@ -4,11 +4,13 @@
 
 Naturalize::FactionType Naturalize::GetFactionFromString(std::string name)
 {
-	if (StringToLower(name) == "human")
+	name = StringToLower(name);
+
+	if (name == "human")
 	{
 		return FACTION_HUMAN;
 	}
-	else if (StringToLower(name) == "plant")
+	else if (name == "plant")
 	{
 		return FACTION_PLANT;
 	}
@@ -36,15 +38,17 @@ std::string Naturalize::GetStringFromFaction(Naturalize::FactionType faction)
 
 Naturalize::MoveType Naturalize::GetMoveTypeFromString(std::string name)
 {
-	if (StringToLower(name) == "infantry")
+	name = StringToLower(name);
+
+	if (name == "infantry")
 	{
 		return MOVETYPE_INFANTRY;
 	}
-	else if (StringToLower(name) == "vehicle")
+	else if (name == "vehicle")
 	{
 		return MOVETYPE_VEHICLE;
 	}
-	else if (StringToLower(name) == "flying")
+	else if (name == "flying")
 	{
 		return MOVETYPE_FLYING;
 	}
