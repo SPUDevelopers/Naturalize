@@ -9,6 +9,8 @@
 
 #include "cocos2d.h"
 
+#include "NatTypes.h"
+
 using namespace cocos2d;
 
 // The Tile class basically holds a bunch of tile attributes and stat for a
@@ -24,17 +26,17 @@ public:
     // Returns a value to affect damage done by a unit
     // Based on int[unit.faction] where unit.faction = for human, 1 for plant
     // Values can be negative
-	const int atkBuf[2] = { 0 };
+	int atkBuf[Naturalize::FACTION_COUNT];
     
     // Returns a value to affect damage done to a unit
     // Based on int[unit.faction] where unit.faction = for human, 1 for plant
     // Values can be negative
-	const int defBuf[2] = { 0 };
+	int defBuf[Naturalize::FACTION_COUNT];
     
     // Movement cost for tiles of a certain type int[tile.type]
     // Tile type mapping to be determined, 6 at the moment
     // Movement ability is calculated by unit movement available - moveCost
-	const int moveCost[6] = { 0 }; //TODO: determine actual array size
+	int moveCost[Naturalize::MOVETYPE_COUNT];
 
 };
 

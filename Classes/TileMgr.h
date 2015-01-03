@@ -4,10 +4,9 @@
 #include "cocos2d.h"
 
 #include <string>
-#include <map> // Use cocos2d-x ValueMap instead of stl map
+#include <map>
 
 #include "MapTile.h"
-#include "NatTypes.h"
 
 // Class to assist in loading and managing tile types on the map.
 // Each type of tile on the map should have a type ID; this is used to retrieve tile objects.
@@ -20,8 +19,8 @@ private:
 	cocos2d::TMXTiledMap *tmxMap;
 	cocos2d::TMXMapInfo *tmxMapInfo;
 
-	typedef std::map<std::string, MapTile> TileDefMap;
-	TileDefMap tileDefs;
+	typedef std::map<std::string, MapTile> TileDefinitions;
+	TileDefinitions tileDefs;
 
 //
 //	Construction
@@ -44,10 +43,10 @@ private:
 	bool loadTileset(const std::string &filename);
 
 	// Set buff based on buff type and faction.
-	bool setTileBuff(const std::string &type, const std::string &faction, const int value, MapTile *mapTile);
+	bool setTileBuff(const std::string &typeName, const std::string &factionName, const int value, MapTile *mapTile);
 
 	// Set movement cost based on movement type.
-	bool setTileMoveCost(const std::string &type, const int value, MapTile *mapTile);
+	bool setTileMoveCost(const std::string &typeName, const int value, MapTile *mapTile);
 
 public:
 	// Get tile object from specified location on map.
@@ -58,6 +57,9 @@ public:
 
 	// Get tile object from specified type.
 	MapTile getTileFromType(const std::string &tilename);
+
+	// Returns number of tile definitions.
+	int getCount();
 
 };
 

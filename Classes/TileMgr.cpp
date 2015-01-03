@@ -1,5 +1,7 @@
 #include "TileMgr.h"
 
+#include "NatTypes.h"
+#include "StringHelpers.h"
 #include "tinyxml2/tinyxml2.h"
 
 TileMgr::TileMgr()
@@ -82,9 +84,10 @@ bool TileMgr::loadTileset(const std::string &filename)
 	for (tinyxml2::XMLElement *curTile = tileset->FirstChildElement("tile"); curTile; curTile = curTile->NextSiblingElement("tile"))
 	{
 		std::string tileName = curTile->Attribute("name"); // Get tile name
+		tileName = StringToLower(tileName); // Convert to lowercase
 
 		// Check if tile exists, if so, skip it!
-		TileDefMap::iterator temp_it = tileDefs.find(tileName);
+		TileDefinitions::iterator temp_it = tileDefs.find(tileName);
 
 		if (temp_it != tileDefs.end())
 		{
@@ -167,16 +170,61 @@ bool TileMgr::loadTileset(const std::string &filename)
 	return true;
 }
 
-bool TileMgr::setTileBuff(const std::string &type, const std::string &faction, const int value, MapTile *mapTile)
+bool TileMgr::setTileBuff(const std::string &typeName, const std::string &factionName, const int value, MapTile *mapTile)
 {
+	//
+	//	Determine faction
+	//
 
+	int faction = Naturalize::GetFactionFromString(factionName);
+
+	if (faction <= Naturalize::FACTION_UNKNOWN || faction >= Naturalize::FACTION_COUNT)
+	{
+		log("Unknown faction type \"%s\" found!", factionName);
+		return false;
+	}
+
+	//
+	//	Determine buff type
+	//
+
+	std::string lowerType = StringToLower(typeName);
+
+	if (lowerType == "attack")
+	{
+		// Apply attack buff
+		mapTile->atkBuf[faction] = value;
+	}
+	else if (lowerType == "defense")
+	{
+		// Apply defensive buff
+		mapTile->defBuf[faction] = value;
+	}
+	else
+	{
+		log("Unknown buff type \"%s\" found!", typeName);
+		return false;
+	}
 
 	return true;
 }
 
-bool TileMgr::setTileMoveCost(const std::string &type, const int value, MapTile *mapTile)
+bool TileMgr::setTileMoveCost(const std::string &typeName, const int value, MapTile *mapTile)
 {
+	//
+	//	Determine movement type
+	//
 
+	int movetype = Naturalize::GetMoveTypeFromString(typeName);
+
+	if (movetype <= Naturalize::MOVETYPE_UNKNOWN || movetype >= Naturalize::MOVETYPE_COUNT)
+	{
+		log("Unknown movement type \"%s\" found!", typeName);
+		return false;
+	}
+
+	// Apply movement cost
+	mapTile->moveCost[movetype] = value;
 
 	return true;
 }
@@ -199,7 +247,21 @@ MapTile TileMgr::getTileFromXY(int x, int y)
 
 MapTile TileMgr::getTileFromType(const std::string &tilename)
 {
-	// Reference the internal tileset list and return a MapTile object
+	std::string lowerName = StringToLower(tilename); // Convert to lowercase
 
-	return MapTile();
+	// Find tile in definition set
+	TileDefinitions::iterator it = tileDefs.find(lowerName);
+
+	if (it == tileDefs.end())
+	{
+		log("Could not find tile definition for tile: %s", tilename);
+		return MapTile(); // Return default tile
+	}
+
+	return it->second;
+}
+
+int TileMgr::getCount()
+{
+	return tileDefs.size();
 }
