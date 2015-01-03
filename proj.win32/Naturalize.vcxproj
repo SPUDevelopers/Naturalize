@@ -142,6 +142,8 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\GameScene.cpp" />
     <ClCompile Include="..\Classes\MainMenuScene.cpp" />
     <ClCompile Include="..\Classes\MapTile.cpp" />
+    <ClCompile Include="..\Classes\NatTypes.cpp" />
+    <ClCompile Include="..\Classes\StringHelpers.cpp" />
     <ClCompile Include="..\Classes\TileMgr.cpp" />
     <ClCompile Include="..\Classes\Unit.cpp" />
     <ClCompile Include="main.cpp" />
@@ -152,6 +154,8 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\GameScene.h" />
     <ClInclude Include="..\Classes\MainMenuScene.h" />
     <ClInclude Include="..\Classes\MapTile.h" />
+    <ClInclude Include="..\Classes\NatTypes.h" />
+    <ClInclude Include="..\Classes\StringHelpers.h" />
     <ClInclude Include="..\Classes\TileMgr.h" />
     <ClInclude Include="..\Classes\Unit.h" />
     <ClInclude Include="main.h" />

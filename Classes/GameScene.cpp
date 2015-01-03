@@ -34,9 +34,14 @@ bool GameScene::init()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
 	// Create a tmx tile map
-	this->map = TMXTiledMap::create("maps/test/test.tmx");
+	std::string mapFilename = "maps/test/test.tmx";
+
+	this->map = TMXTiledMap::create(mapFilename);
 	this->map->setScale(1, 1);
 	this->addChild(map, 0, -1);
+
+	// Init the tile manager
+	this->tileMgr.init(mapFilename, this->map);
 	
 	//TMXObjectGroup *objectGroup = this->map->objectGroupNamed("objects");
 	//ValueMap object = objectGroup->objectNamed("lumberjack");

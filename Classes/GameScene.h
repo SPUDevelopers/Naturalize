@@ -3,6 +3,7 @@
 
 #include "cocos2d.h"
 
+#include "TileMgr.h"
 #include "Cursor.h"
 
 enum GameSceneState
@@ -22,10 +23,13 @@ private:
 	// Movement/selection cursor
 	Cursor cursor;
 
+//
+//	Public class variables
+//
 public:
-	
-	// Public class variables
 	cocos2d::TMXTiledMap* map;
+	TileMgr tileMgr;
+
 	float panSpeed = 10;
 	
 	/////////////////////////////////////////////////////////////////////////

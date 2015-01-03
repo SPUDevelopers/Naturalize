@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<tileset>
+  <tile name="grass">
+    <!-- ATTACK BUFFS -->
+    <buff type="attack" faction="human">0</buff>
+    <buff type="attack" faction="plant">0</buff>
+    
+    <!-- DEFENSIVE BUFFS -->
+    <buff type="defense" faction="human">0</buff>
+    <buff type="defense" faction="plant">0</buff>
+
+    <!-- MOVEMENT COST -->
+    <movecost type="infantry">2</movecost>
+    <movecost type="flying">1</movecost>
+    <movecost type="vehicle">1</movecost>
+  </tile>
+
+  <tile name="plains">
+    <!-- ATTACK BUFFS -->
+    <buff type="attack" faction="human">1</buff>
+    <buff type="attack" faction="plant">0</buff>
+
+    <!-- DEFENSIVE BUFFS -->
+    <buff type="defense" faction="human">-1</buff>
+    <buff type="defense" faction="plant">0</buff>
+
+    <!-- MOVEMENT COST -->
+    <movecost type="infantry">3</movecost>
+    <movecost type="flying">1</movecost>
+    <movecost type="vehicle">2</movecost>
+  </tile>
+</tileset>

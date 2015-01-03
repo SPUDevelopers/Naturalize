@@ -40,6 +40,10 @@
     <ClCompile Include="..\Classes\MapTile.cpp">
       <Filter>GameScene</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\NatTypes.cpp">
+      <Filter>GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\StringHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -62,6 +66,12 @@
       <Filter>GameScene</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\MapTile.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\NatTypes.h">
+      <Filter>GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\StringHelpers.h">
       <Filter>GameScene</Filter>
     </ClInclude>
   </ItemGroup>
