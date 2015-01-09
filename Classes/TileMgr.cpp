@@ -62,7 +62,7 @@ void TileMgr::cleanup()
 
 bool TileMgr::loadTileset(const std::string &filename)
 {
-	log("Opening tile definitions: %s", filename);
+	log("Opening tile definitions: %s", filename.c_str());
 
 	tinyxml2::XMLError err;
 
@@ -98,7 +98,7 @@ bool TileMgr::loadTileset(const std::string &filename)
 
 		if (temp_it != this->tileDefs.end())
 		{
-			log("Found duplicate tile definition \"%s\". Skipping...", tileName);
+			log("Found duplicate tile definition \"%s\". Skipping...", tileName.c_str());
 			continue;
 		}
 
@@ -127,7 +127,7 @@ bool TileMgr::loadTileset(const std::string &filename)
 			// Parse buff
 			if (!setTileBuff(buffType, faction, value, &newTile))
 			{
-				log("Failed to set %s %s buff = %d.", faction, buffType, value);
+				log("Failed to set %s %s buff = %d.", faction.c_str(), buffType.c_str(), value);
 				continue;
 			}
 		}
@@ -153,7 +153,7 @@ bool TileMgr::loadTileset(const std::string &filename)
 			// Parse movement cost
 			if (!setTileMoveCost(moveType, value, &newTile))
 			{
-				log("Failed to set %s movement cost = %d.", moveType, value);
+				log("Failed to set %s movement cost = %d.", moveType.c_str(), value);
 				continue;
 			}
 		}
@@ -172,7 +172,7 @@ bool TileMgr::loadTileset(const std::string &filename)
 		return false;
 	}
 
-	log("Successfully loaded %d tiles from %s.", numOfSuccesses, filename);
+	log("Successfully loaded %d tiles from %s.", numOfSuccesses, filename.c_str());
 
 	return true;
 }
@@ -187,7 +187,7 @@ bool TileMgr::setTileBuff(const std::string &typeName, const std::string &factio
 
 	if (faction <= Naturalize::FACTION_UNKNOWN || faction >= Naturalize::FACTION_COUNT)
 	{
-		log("Unknown faction type \"%s\" found!", factionName);
+		log("Unknown faction type \"%s\" found!", factionName.c_str());
 		return false;
 	}
 
@@ -209,7 +209,7 @@ bool TileMgr::setTileBuff(const std::string &typeName, const std::string &factio
 	}
 	else
 	{
-		log("Unknown buff type \"%s\" found!", typeName);
+		log("Unknown buff type \"%s\" found!", typeName.c_str());
 		return false;
 	}
 
@@ -226,7 +226,7 @@ bool TileMgr::setTileMoveCost(const std::string &typeName, const int value, MapT
 
 	if (movetype <= Naturalize::MOVETYPE_UNKNOWN || movetype >= Naturalize::MOVETYPE_COUNT)
 	{
-		log("Unknown movement type \"%s\" found!", typeName);
+		log("Unknown movement type \"%s\" found!", typeName.c_str());
 		return false;
 	}
 
@@ -288,7 +288,7 @@ MapTile TileMgr::getTileFromType(const std::string &tilename)
 
 	if (it == this->tileDefs.end())
 	{
-		log("Could not find tile definition for tile: %s", tilename);
+		log("Could not find tile definition for tile: %s", tilename.c_str());
 		return MapTile(); // Return default tile
 	}
 

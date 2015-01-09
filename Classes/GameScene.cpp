@@ -88,7 +88,8 @@ bool GameScene::init()
 
 void GameScene::update(float delta)
 {
-	log("Delta: %f FPS: %f", delta, 1 / delta);
+	// Log frame data
+	//log("Delta: %f FPS: %f", delta, 1 / delta);
 
 	// Call state-specific update methods
 	switch (cur_state)

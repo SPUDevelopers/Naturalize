@@ -55,10 +55,24 @@
 		521A8EAA19F11F5000D177D7 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 521A8EA819F11F5000D177D7 /* fonts */; };
 		5C6A6DE21A034AD500885028 /* GameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6A6DE01A034AD500885028 /* GameScene.cpp */; };
 		5C6A6DE31A034AD500885028 /* GameScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6A6DE01A034AD500885028 /* GameScene.cpp */; };
+		5C92E8851A5F589300594BD1 /* tilesets in Resources */ = {isa = PBXBuildFile; fileRef = 5C92E8841A5F589300594BD1 /* tilesets */; };
+		5C92E8861A5F589300594BD1 /* tilesets in Resources */ = {isa = PBXBuildFile; fileRef = 5C92E8841A5F589300594BD1 /* tilesets */; };
 		5C9565B71A15879700837650 /* maps in Resources */ = {isa = PBXBuildFile; fileRef = 5C9565B61A15879700837650 /* maps */; };
 		5C9565BB1A1587D700837650 /* desktop in Resources */ = {isa = PBXBuildFile; fileRef = 5C9565BA1A1587D700837650 /* desktop */; };
 		5C9565BC1A1587D700837650 /* desktop in Resources */ = {isa = PBXBuildFile; fileRef = 5C9565BA1A1587D700837650 /* desktop */; };
 		5C9565BD1A15888000837650 /* maps in Resources */ = {isa = PBXBuildFile; fileRef = 5C9565B61A15879700837650 /* maps */; };
+		5CB9108A1A57D9C000C61262 /* Cursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB9107E1A57D9C000C61262 /* Cursor.cpp */; };
+		5CB9108B1A57D9C000C61262 /* Cursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB9107E1A57D9C000C61262 /* Cursor.cpp */; };
+		5CB9108C1A57D9C000C61262 /* MapTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB910801A57D9C000C61262 /* MapTile.cpp */; };
+		5CB9108D1A57D9C000C61262 /* MapTile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB910801A57D9C000C61262 /* MapTile.cpp */; };
+		5CB9108E1A57D9C000C61262 /* NatTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB910821A57D9C000C61262 /* NatTypes.cpp */; };
+		5CB9108F1A57D9C000C61262 /* NatTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB910821A57D9C000C61262 /* NatTypes.cpp */; };
+		5CB910901A57D9C000C61262 /* StringHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB910841A57D9C000C61262 /* StringHelpers.cpp */; };
+		5CB910911A57D9C000C61262 /* StringHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB910841A57D9C000C61262 /* StringHelpers.cpp */; };
+		5CB910921A57D9C000C61262 /* TileMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB910861A57D9C000C61262 /* TileMgr.cpp */; };
+		5CB910931A57D9C000C61262 /* TileMgr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB910861A57D9C000C61262 /* TileMgr.cpp */; };
+		5CB910941A57D9C000C61262 /* Unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB910881A57D9C000C61262 /* Unit.cpp */; };
+		5CB910951A57D9C000C61262 /* Unit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CB910881A57D9C000C61262 /* Unit.cpp */; };
 		BF171245129291EC00B8313A /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB012928DE900B8313A /* OpenGLES.framework */; };
 		BF1712471292920000B8313A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BF170DB412928DE900B8313A /* libz.dylib */; };
 		BF1C47F01293687400B63C5D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1C47EA1293683800B63C5D /* QuartzCore.framework */; };
@@ -148,8 +162,21 @@
 		521A8EA819F11F5000D177D7 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		5C6A6DE01A034AD500885028 /* GameScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameScene.cpp; sourceTree = "<group>"; };
 		5C6A6DE11A034AD500885028 /* GameScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameScene.h; sourceTree = "<group>"; };
+		5C92E8841A5F589300594BD1 /* tilesets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = tilesets; sourceTree = "<group>"; };
 		5C9565B61A15879700837650 /* maps */ = {isa = PBXFileReference; lastKnownFileType = folder; path = maps; sourceTree = "<group>"; };
 		5C9565BA1A1587D700837650 /* desktop */ = {isa = PBXFileReference; lastKnownFileType = folder; path = desktop; sourceTree = "<group>"; };
+		5CB9107E1A57D9C000C61262 /* Cursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cursor.cpp; sourceTree = "<group>"; };
+		5CB9107F1A57D9C000C61262 /* Cursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cursor.h; sourceTree = "<group>"; };
+		5CB910801A57D9C000C61262 /* MapTile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapTile.cpp; sourceTree = "<group>"; };
+		5CB910811A57D9C000C61262 /* MapTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapTile.h; sourceTree = "<group>"; };
+		5CB910821A57D9C000C61262 /* NatTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NatTypes.cpp; sourceTree = "<group>"; };
+		5CB910831A57D9C000C61262 /* NatTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NatTypes.h; sourceTree = "<group>"; };
+		5CB910841A57D9C000C61262 /* StringHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringHelpers.cpp; sourceTree = "<group>"; };
+		5CB910851A57D9C000C61262 /* StringHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHelpers.h; sourceTree = "<group>"; };
+		5CB910861A57D9C000C61262 /* TileMgr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TileMgr.cpp; sourceTree = "<group>"; };
+		5CB910871A57D9C000C61262 /* TileMgr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileMgr.h; sourceTree = "<group>"; };
+		5CB910881A57D9C000C61262 /* Unit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Unit.cpp; sourceTree = "<group>"; };
+		5CB910891A57D9C000C61262 /* Unit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Unit.h; sourceTree = "<group>"; };
 		BF170DB012928DE900B8313A /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		BF170DB412928DE900B8313A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		BF1C47EA1293683800B63C5D /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -271,6 +298,7 @@
 		46880B7519C43A67006E1F66 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5C92E8841A5F589300594BD1 /* tilesets */,
 				5C9565BA1A1587D700837650 /* desktop */,
 				5C9565B61A15879700837650 /* maps */,
 				521A8EA819F11F5000D177D7 /* fonts */,
@@ -283,6 +311,18 @@
 		46880B8319C43A87006E1F66 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				5CB9107E1A57D9C000C61262 /* Cursor.cpp */,
+				5CB9107F1A57D9C000C61262 /* Cursor.h */,
+				5CB910801A57D9C000C61262 /* MapTile.cpp */,
+				5CB910811A57D9C000C61262 /* MapTile.h */,
+				5CB910821A57D9C000C61262 /* NatTypes.cpp */,
+				5CB910831A57D9C000C61262 /* NatTypes.h */,
+				5CB910841A57D9C000C61262 /* StringHelpers.cpp */,
+				5CB910851A57D9C000C61262 /* StringHelpers.h */,
+				5CB910861A57D9C000C61262 /* TileMgr.cpp */,
+				5CB910871A57D9C000C61262 /* TileMgr.h */,
+				5CB910881A57D9C000C61262 /* Unit.cpp */,
+				5CB910891A57D9C000C61262 /* Unit.h */,
 				46880B8519C43A87006E1F66 /* AppDelegate.h */,
 				46880B8419C43A87006E1F66 /* AppDelegate.cpp */,
 				46880B8719C43A87006E1F66 /* MainMenuScene.h */,
@@ -462,6 +502,7 @@
 				5087E77E17EB970100C73F5D /* Default.png in Resources */,
 				5C9565B71A15879700837650 /* maps in Resources */,
 				521A8E6419F0C34300D177D7 /* Default-667h@2x.png in Resources */,
+				5C92E8851A5F589300594BD1 /* tilesets in Resources */,
 				50EF629717ECD46A001EB2F8 /* Icon-58.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -471,6 +512,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				503AE0F817EB97AB00D1A890 /* Icon.icns in Resources */,
+				5C92E8861A5F589300594BD1 /* tilesets in Resources */,
 				5C9565BC1A1587D700837650 /* desktop in Resources */,
 				3EACC99019EE6D4300EB3C5E /* res in Resources */,
 				5C9565BD1A15888000837650 /* maps in Resources */,
@@ -485,12 +527,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CB9108C1A57D9C000C61262 /* MapTile.cpp in Sources */,
+				5CB9108E1A57D9C000C61262 /* NatTypes.cpp in Sources */,
+				5CB910901A57D9C000C61262 /* StringHelpers.cpp in Sources */,
 				46880B8819C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				46880B8A19C43A87006E1F66 /* MainMenuScene.cpp in Sources */,
+				5CB9108A1A57D9C000C61262 /* Cursor.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
 				5C6A6DE21A034AD500885028 /* GameScene.cpp in Sources */,
+				5CB910941A57D9C000C61262 /* Unit.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
+				5CB910921A57D9C000C61262 /* TileMgr.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -498,10 +546,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5CB9108D1A57D9C000C61262 /* MapTile.cpp in Sources */,
+				5CB910931A57D9C000C61262 /* TileMgr.cpp in Sources */,
 				46880B8919C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				503AE10517EB98FF00D1A890 /* main.cpp in Sources */,
 				5C6A6DE31A034AD500885028 /* GameScene.cpp in Sources */,
+				5CB910911A57D9C000C61262 /* StringHelpers.cpp in Sources */,
 				46880B8B19C43A87006E1F66 /* MainMenuScene.cpp in Sources */,
+				5CB9108F1A57D9C000C61262 /* NatTypes.cpp in Sources */,
+				5CB9108B1A57D9C000C61262 /* Cursor.cpp in Sources */,
+				5CB910951A57D9C000C61262 /* Unit.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
