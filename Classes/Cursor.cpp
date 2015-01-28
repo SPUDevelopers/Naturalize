@@ -1,5 +1,7 @@
 #include "Cursor.h"
 
+USING_NS_CC;
+
 Cursor::Cursor() :
 	curX(0),
 	curY(0),
@@ -34,12 +36,15 @@ bool Cursor::init(const cocos2d::Size tileSize)
 	// Super init
 	if (!cocos2d::Node::init())
 		return false;
-
+	
+	log("*** CURSOR INIT ***");
+	
 	// Cache map grid size
 	this->tileSize = tileSize;
 
 	// Create sprite and attach
-	this->cursprite = cocos2d::Sprite::create("cursorsprite.png");
+	this->cursprite = cocos2d::Sprite::create("maps/test/cursorsprite.png");
+	this->cursprite->setPosition(Vec2(64, 64));
 	this->addChild(this->cursprite);
 
 	return true;
@@ -49,12 +54,14 @@ void Cursor::move(int dx, int dy)
 {
 	curX += dx * (int)(this->tileSize.width);
 	curY += dy * (int)(this->tileSize.height);
+	this->setPosition(Vec2(curX,curY));
 }
 
 void Cursor::moveToXY(int x, int y)
 {
 	curX = x * (int)(this->tileSize.width);
 	curY = y * (int)(this->tileSize.height);
+	this->runAction(Repeat::create(MoveTo::create(0.1, Vec2(curX, curY)), 1));
 }
 
 int Cursor::getX()

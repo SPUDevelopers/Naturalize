@@ -30,7 +30,7 @@ bool GameScene::init()
 		return false;
 	}
 	
-	Size visibleSize = Director::getInstance()->getVisibleSize();
+	//Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
 	// Create a tmx tile map
@@ -40,8 +40,14 @@ bool GameScene::init()
 	this->map->setScale(1, 1);
 	this->addChild(map, 0, -1);
 
+	this->tileSize = this->map->getTileSize().width;
+	
 	// Init the tile manager
 	this->tileMgr.init(mapFilename, this->map);
+	
+	// Cursor init
+	this->cursor = Cursor::create(this->map->getTileSize());
+	this->addChild(this->cursor, 0, 0);
 	
 	//TMXObjectGroup *objectGroup = this->map->objectGroupNamed("objects");
 	//ValueMap object = objectGroup->objectNamed("lumberjack");
@@ -131,29 +137,32 @@ void GameScene::updateWaitState(float delta)
 
 #pragma mark - MOVE MAP
 
-void GameScene::moveMap(char direction)
+void GameScene::move(Vec2 position)
 {
+	// Set up vars
+	Vec2 newPosition = Vec2(floor(position.x / this->tileSize), floor(position.y / this->tileSize)); // Find new cursor position
 	Vec2 mapPosition = this->map->getPosition();
-	Vec2 movePosition = Vec2(0, 0);
-	
 	Size mapSize = this->map->getMapSize();
 	Size windowSize = Director::getInstance()->getVisibleSize();
 	
-	// Check for being at map bounderies and return direction "n"
-	if (mapPosition.y > -128 && direction == 'd') direction = 'n';
-	if (mapPosition.x > -128 && direction == 'l') direction = 'n';
-	if (mapPosition.y < ((-128 * (mapSize.height - 1)) + windowSize.height) && direction == 'u') direction = 'n';
-	if (mapPosition.x < ((-128 * (mapSize.width - 1)) + windowSize.width) && direction == 'r') direction = 'n';
+	// Check for edge of map
+	if (newPosition.y >= ((windowSize.height / this->tileSize)))
+	{
+		this->moveScene(Vec2(mapPosition.x, mapPosition.y - this->tileSize));
+		//newPosition.y = (this->cursor->getY() / this->tileSize);
+	}
 	
-	// Set move position
-	if (direction == 'u') movePosition = Vec2(0, -128);
-	else if (direction == 'd') movePosition = Vec2(0, 128);
-	else if (direction == 'l') movePosition = Vec2(128, 0);
-	else if (direction == 'r') movePosition = Vec2(-128, 0);
-	else log("Map Boundary Reached");
+	// Move cursor
+	this->cursor->moveToXY(newPosition.x, newPosition.y);
+}
 
-	MoveBy* mapMove = MoveBy::create(0.2, movePosition);
-	this->map->runAction(Repeat::create(mapMove, 1));
+void GameScene::moveScene(Vec2 position) // In pixel coords
+{
+	this->runAction(Repeat::create(MoveTo::create(0.2, Vec2(position.x , position.y)), 1));
+	//if (direction == 'u') this->map->runAction(Repeat::create(MoveBy::create(0.2, Vec2(0, (this->tileSize * -1))), 1));
+	//else if (direction == 'd') this->map->runAction(Repeat::create(MoveBy::create(0.2, Vec2(0, this->tileSize)), 1));
+	//else if (direction == 'l') this->map->runAction(Repeat::create(MoveBy::create(0.2, Vec2(this->tileSize, 0)), 1));
+	//else if (direction == 'r') this->map->runAction(Repeat::create(MoveBy::create(0.2, Vec2((this->tileSize * -1), 0)), 1));
 }
 
 #pragma mark - CONTROL EVENTS
@@ -167,30 +176,22 @@ void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 		if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
 		{
 			log("UP_ARROW was pressed");
-			this->moveMap('u');
-
-			this->cursor.move(0, 1);
+			this->move(Vec2(this->cursor->getX(), (this->cursor->getY() + this->tileSize)));
 		}
 		if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
 		{
 			log("DOWN_ARROW was pressed");
-			this->moveMap('d');
-
-			this->cursor.move(0, -1);
+			this->move(Vec2(this->cursor->getX(), (this->cursor->getY() - this->tileSize)));
 		}
 		if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
 		{
 			log("LEFT_ARROW was pressed");
-			this->moveMap('l');
-
-			this->cursor.move(-1, 0);
+			this->move(Vec2((this->cursor->getX() - this->tileSize), this->cursor->getY()));
 		}
 		if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
 		{
 			log("RIGHT_ARROW was pressed");
-			this->moveMap('r');
-
-			this->cursor.move(1, 0);
+			this->move(Vec2((this->cursor->getX() + this->tileSize), this->cursor->getY()));
 		}
 	}
 }
@@ -203,14 +204,16 @@ void GameScene::keyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
 void GameScene::onTouchesBegan(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)
 {
 	log("touchesBegan");
+	
+	auto touch = *touches.begin();
+	this->move(touch->getLocation());
 }
 
 void GameScene::onTouchesMoved(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)
 {
 	log("touchesMoved");
-	
 	auto touch = *touches.begin();
-	//this->moveMap(touch->getDelta());
+	this->moveScene(touch->getDelta());
 }
 
 void GameScene::onTouchesEnded(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)

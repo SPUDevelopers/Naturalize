@@ -21,8 +21,11 @@ private:
 	GameSceneState cur_state;
 
 	// Movement/selection cursor
-	Cursor cursor;
-
+	Cursor *cursor;
+	
+	// Tile size
+	float tileSize;
+	
 //
 //	Public class variables
 //
@@ -75,7 +78,8 @@ public:
 	// Map
 
 	// Map movement method
-	void moveMap(char direction);
+	void move(Vec2 position);
+	void moveScene(Vec2 position);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Callbacks
