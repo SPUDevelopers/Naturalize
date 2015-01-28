@@ -40,26 +40,28 @@ bool GameScene::init()
 	this->map->setScale(1, 1);
 	this->addChild(map, 0, -1);
 
+	//TMXObjectGroup *objectGroup = this->map->objectGroupNamed("objects");
+	//ValueMap object = objectGroup->objectNamed("lumberjack");
+	//auto description = object[0].;
+	//this->addChild(object, 0, 0);
+
+	// All tiles are aliased by default: set them anti-aliased
+	for (const auto& child : map->getChildren())
+	{
+		static_cast<SpriteBatchNode*>(child)->getTexture()->setAntiAliasTexParameters();
+	}
+
+
 	this->tileSize = this->map->getTileSize().width;
 	
 	// Init the tile manager
 	this->tileMgr.init(mapFilename, this->map);
 	
 	// Cursor init
-	this->cursor = Cursor::create(this->map->getTileSize());
-	this->addChild(this->cursor, 0, 0);
+	this->cursor = Cursor::create(this->map->getTileSize(), this->map->getMapSize());
+	this->map->addChild(this->cursor, 0, 0);
 	
-	//TMXObjectGroup *objectGroup = this->map->objectGroupNamed("objects");
-	//ValueMap object = objectGroup->objectNamed("lumberjack");
-	//auto description = object[0].;
-	//this->addChild(object, 0, 0);
-	
-	// All tiles are aliased by default: set them anti-aliased
-	for (const auto& child : map->getChildren())
-	{
-		static_cast<SpriteBatchNode*>(child)->getTexture()->setAntiAliasTexParameters();
-	}
-	
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 	// Set up keyboard listener
 	auto keyboardListener = EventListenerKeyboard::create();
@@ -137,7 +139,58 @@ void GameScene::updateWaitState(float delta)
 
 #pragma mark - MOVE MAP
 
-void GameScene::move(Vec2 position)
+void GameScene::updateMapMovement()
+{
+	// Get cursor position relative to screen (in px)
+	int curMapX = (int)(this->cursor->getPositionX() + this->map->getPositionX());
+	int curMapY = (int)(this->cursor->getPositionY() + this->map->getPositionY());
+
+	// Get window size (in px)
+	Size windowSize = Director::getInstance()->getVisibleSize();
+
+	// Get map width (in px)
+	int mapWidth = (int)(this->map->getMapSize().width * this->tileSize);
+	int mapHeight = (int)(this->map->getMapSize().height * this->tileSize);
+
+	// Check if cursor is at edge of screen
+	if (curMapX >= (windowSize.width - this->tileSize))			// Scroll right
+	{
+		log("a");
+		if (this->map->getPositionX() > (windowSize.width - mapWidth))
+		{
+			this->map->setPositionX(this->map->getPositionX() - this->tileSize);
+		}
+	}
+	
+	if (curMapX < this->tileSize)							// Scroll left
+	{
+		log("b");
+		if (this->map->getPositionX() < 0)
+		{
+			this->map->setPositionX(this->map->getPositionX() + this->tileSize);
+		}
+	}
+	
+	if (curMapY >= (windowSize.height - this->tileSize))	// Scroll up
+	{
+		log("c");
+		if (this->map->getPositionY() > (windowSize.height - mapHeight))
+		{
+			this->map->setPositionY(this->map->getPositionY() - this->tileSize);
+		}
+	}
+	
+	if (curMapY < this->tileSize)							// Scroll down
+	{
+		log("d");
+		if (this->map->getPositionY() < 0)
+		{
+			this->map->setPositionY(this->map->getPositionY() + this->tileSize);
+		}
+	}
+}
+
+/*void GameScene::move(Vec2 position)
 {
 	// Set up vars
 	Vec2 newPosition = Vec2(floor(position.x / this->tileSize), floor(position.y / this->tileSize)); // Find new cursor position
@@ -154,7 +207,7 @@ void GameScene::move(Vec2 position)
 	
 	// Move cursor
 	this->cursor->moveToXY(newPosition.x, newPosition.y);
-}
+}*/
 
 void GameScene::moveScene(Vec2 position) // In pixel coords
 {
@@ -176,22 +229,34 @@ void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 		if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
 		{
 			log("UP_ARROW was pressed");
-			this->move(Vec2(this->cursor->getX(), (this->cursor->getY() + this->tileSize)));
+			this->cursor->move(0, 1);
+			this->updateMapMovement();
+
+			//this->move(Vec2(this->cursor->getX(), (this->cursor->getY() + this->tileSize)));
 		}
 		if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
 		{
 			log("DOWN_ARROW was pressed");
-			this->move(Vec2(this->cursor->getX(), (this->cursor->getY() - this->tileSize)));
+			this->cursor->move(0, -1);
+			this->updateMapMovement();
+
+			//this->move(Vec2(this->cursor->getX(), (this->cursor->getY() - this->tileSize)));
 		}
 		if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
 		{
 			log("LEFT_ARROW was pressed");
-			this->move(Vec2((this->cursor->getX() - this->tileSize), this->cursor->getY()));
+			this->cursor->move(-1, 0);
+			this->updateMapMovement();
+
+			//this->move(Vec2((this->cursor->getX() - this->tileSize), this->cursor->getY()));
 		}
 		if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
 		{
 			log("RIGHT_ARROW was pressed");
-			this->move(Vec2((this->cursor->getX() + this->tileSize), this->cursor->getY()));
+			this->cursor->move(1, 0);
+			this->updateMapMovement();
+
+			//this->move(Vec2((this->cursor->getX() + this->tileSize), this->cursor->getY()));
 		}
 	}
 }
@@ -206,7 +271,9 @@ void GameScene::onTouchesBegan(const std::vector<cocos2d::Touch*> &touches, coco
 	log("touchesBegan");
 	
 	auto touch = *touches.begin();
-	this->move(touch->getLocation());
+	
+	// TODO: Convert this to tile coordinates
+	this->cursor->moveToXY(touch->getLocation());
 }
 
 void GameScene::onTouchesMoved(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)

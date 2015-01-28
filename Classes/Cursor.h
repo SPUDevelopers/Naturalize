@@ -12,6 +12,7 @@ private:
 	int curY;
 
 	cocos2d::Size tileSize; // Map tile size (in px)
+	cocos2d::Size mapSize; // Map size (in tiles)
 
 public:
 	//
@@ -22,10 +23,10 @@ public:
 	~Cursor();
 
 	// Creates a Cursor object with the given grid square size (in px)
-	static Cursor* create(const cocos2d::Size tileSize);
+	static Cursor* create(const cocos2d::Size tileSize, const cocos2d::Size mapSize);
 
 	// Initializes a Cursor with the specified map grid size
-	virtual bool init(const cocos2d::Size tileSize);
+	virtual bool init(const cocos2d::Size tileSize, const cocos2d::Size mapSize);
 
 	//
 	//	Methods
@@ -34,14 +35,17 @@ public:
 	// Moves the cursor relative to its current position.
 	// Coordinates are in map tiles.
 	void move(int dx, int dy);
+	void move(cocos2d::Vec2 delta);
 
 	// Moves the cursor to an absolute position on the map.
 	// Coordinates are in map tiles.
 	void moveToXY(int x, int y);
+	void moveToXY(cocos2d::Vec2 delta);
 
 	int getX();
-
 	int getY();
+
+	cocos2d::Vec2 getXY();
 };
 
 #endif
