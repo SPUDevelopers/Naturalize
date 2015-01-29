@@ -20,8 +20,6 @@ Scene* GameScene::createScene()
 
 // on "init" you need to initialize your instance
 
-#pragma mark - GAMESCENE INIT
-
 bool GameScene::init()
 {
 	// Super init
@@ -92,8 +90,6 @@ bool GameScene::init()
 	return true;
 }
 
-#pragma mark - SCENE UPDATE
-
 void GameScene::update(float delta)
 {
 	// Log frame data
@@ -136,8 +132,6 @@ void GameScene::updateWaitState(float delta)
 {
 
 }
-
-#pragma mark - MOVE MAP
 
 void GameScene::updateMapMovement(Direction dir)
 {
@@ -240,8 +234,6 @@ void GameScene::moveScene(Vec2 position) // In pixel coords
 	//else if (direction == 'l') this->map->runAction(Repeat::create(MoveBy::create(0.2, Vec2(this->tileSize, 0)), 1));
 	//else if (direction == 'r') this->map->runAction(Repeat::create(MoveBy::create(0.2, Vec2((this->tileSize * -1), 0)), 1));
 }
-
-#pragma mark - CONTROL EVENTS
 
 void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event)
 {
