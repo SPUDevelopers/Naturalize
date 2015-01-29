@@ -14,6 +14,15 @@ enum GameSceneState
 	GAMESTATE_WAIT			// Waiting for animation/movement
 };
 
+// Enum of directions. These can be used separately, or OR-ed together for combinations
+enum Direction
+{
+	DIRECTION_LEFT	= 0x1,
+	DIRECTION_UP	= 0x2,
+	DIRECTION_RIGHT	= 0x4,
+	DIRECTION_DOWN	= 0x8
+};
+
 class GameScene : public cocos2d::Layer
 {
 private:
@@ -77,8 +86,8 @@ public:
 	/////////////////////////////////////////////////////////////////////////
 	// Map
 
-	// Map movement method
-	void updateMapMovement();
+	// Map movement method (dir is the direction the cursor moved in)
+	void updateMapMovement(Direction dir);
 
 	void move(Vec2 position);
 	void moveScene(Vec2 position);

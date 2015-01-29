@@ -139,11 +139,11 @@ void GameScene::updateWaitState(float delta)
 
 #pragma mark - MOVE MAP
 
-void GameScene::updateMapMovement()
+void GameScene::updateMapMovement(Direction dir)
 {
 	// Get cursor position relative to screen (in px)
-	int curMapX = (int)(this->cursor->getPositionX() + this->map->getPositionX());
-	int curMapY = (int)(this->cursor->getPositionY() + this->map->getPositionY());
+	int cursorX = (int)(this->cursor->getPositionX() + this->map->getPositionX());
+	int cursorY = (int)(this->cursor->getPositionY() + this->map->getPositionY());
 
 	// Get window size (in px)
 	Size windowSize = Director::getInstance()->getVisibleSize();
@@ -151,41 +151,64 @@ void GameScene::updateMapMovement()
 	// Get map width (in px)
 	int mapWidth = (int)(this->map->getMapSize().width * this->tileSize);
 	int mapHeight = (int)(this->map->getMapSize().height * this->tileSize);
+	
+	//
+	//	Check if cursor is at edge of screen
+	//
 
-	// Check if cursor is at edge of screen
-	if (curMapX >= (windowSize.width - this->tileSize))			// Scroll right
+	if (dir & DIRECTION_RIGHT)
 	{
-		log("a");
-		if (this->map->getPositionX() > (windowSize.width - mapWidth))
+		// Check cursor-screen bounds
+		if (cursorX >= (windowSize.width - this->tileSize)) // Cursor is within 1 tile from edge
 		{
-			this->map->setPositionX(this->map->getPositionX() - this->tileSize);
+			// Check map-screen bounds
+			if (this->map->getPositionX() > (windowSize.width - mapWidth))
+			{
+				// Move map left
+				this->map->setPositionX(this->map->getPositionX() - this->tileSize);
+			}
 		}
 	}
 	
-	if (curMapX < this->tileSize)							// Scroll left
+	if (dir & DIRECTION_LEFT)
 	{
-		log("b");
-		if (this->map->getPositionX() < 0)
+		// Check cursor-screen bounds
+		if (cursorX < this->tileSize) // Cursor is within 1 tile from edge
 		{
-			this->map->setPositionX(this->map->getPositionX() + this->tileSize);
+			// Check map-screen bounds
+			if (this->map->getPositionX() < 0)
+			{
+				// Move map right
+				this->map->setPositionX(this->map->getPositionX() + this->tileSize);
+			}
 		}
 	}
 	
-	if (curMapY >= (windowSize.height - this->tileSize))	// Scroll up
+	if (dir & DIRECTION_UP)
 	{
-		log("c");
-		if (this->map->getPositionY() > (windowSize.height - mapHeight))
+		// Check cursor-screen bounds
+		if (cursorY >= (windowSize.height - this->tileSize)) // Cursor is within 1 tile from edge
 		{
-			this->map->setPositionY(this->map->getPositionY() - this->tileSize);
+			// Check map-screen bounds
+			if (this->map->getPositionY() > (windowSize.height - mapHeight))
+			{
+				// Move map down
+				this->map->setPositionY(this->map->getPositionY() - this->tileSize);
+			}
 		}
 	}
 	
-	if (curMapY < this->tileSize)							// Scroll down
+	if (dir & DIRECTION_DOWN)
 	{
-		log("d");
-		if (this->map->getPositionY() < 0)
+		// Check cursor-screen bounds
+		if (cursorY < this->tileSize) // Cursor is within 1 tile from edge
 		{
-			this->map->setPositionY(this->map->getPositionY() + this->tileSize);
+			// Check map-screen bounds
+			if (this->map->getPositionY() < 0)
+			{
+				// Move map up
+				this->map->setPositionY(this->map->getPositionY() + this->tileSize);
+			}
 		}
 	}
 }
@@ -230,33 +253,25 @@ void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 		{
 			log("UP_ARROW was pressed");
 			this->cursor->move(0, 1);
-			this->updateMapMovement();
-
-			//this->move(Vec2(this->cursor->getX(), (this->cursor->getY() + this->tileSize)));
+			this->updateMapMovement(DIRECTION_UP);
 		}
 		if (keyCode == EventKeyboard::KeyCode::KEY_DOWN_ARROW)
 		{
 			log("DOWN_ARROW was pressed");
 			this->cursor->move(0, -1);
-			this->updateMapMovement();
-
-			//this->move(Vec2(this->cursor->getX(), (this->cursor->getY() - this->tileSize)));
+			this->updateMapMovement(DIRECTION_DOWN);
 		}
 		if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
 		{
 			log("LEFT_ARROW was pressed");
 			this->cursor->move(-1, 0);
-			this->updateMapMovement();
-
-			//this->move(Vec2((this->cursor->getX() - this->tileSize), this->cursor->getY()));
+			this->updateMapMovement(DIRECTION_LEFT);
 		}
 		if (keyCode == EventKeyboard::KeyCode::KEY_RIGHT_ARROW)
 		{
 			log("RIGHT_ARROW was pressed");
 			this->cursor->move(1, 0);
-			this->updateMapMovement();
-
-			//this->move(Vec2((this->cursor->getX() + this->tileSize), this->cursor->getY()));
+			this->updateMapMovement(DIRECTION_RIGHT);
 		}
 	}
 }
