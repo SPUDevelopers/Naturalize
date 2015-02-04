@@ -32,6 +32,9 @@ private:
 	// Movement/selection cursor
 	Cursor *cursor;
 	
+	// Map position relative to screen (in px)
+	cocos2d::Vec2 mapPixelPosition;
+
 	// Tile size
 	float tileSize;
 	
@@ -89,8 +92,10 @@ public:
 	// Map movement method (dir is the direction the cursor moved in)
 	void updateMapMovement(Direction dir);
 
-	void move(Vec2 position);
+	// Moves the map to the specified x,y (in px)
 	void moveScene(Vec2 position);
+	void moveSceneX(float positionX);
+	void moveSceneY(float positionY);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Callbacks

@@ -43,7 +43,9 @@
     <ClCompile Include="..\Classes\NatTypes.cpp">
       <Filter>GameScene</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\StringHelpers.cpp" />
+    <ClCompile Include="..\Classes\StringHelpers.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">

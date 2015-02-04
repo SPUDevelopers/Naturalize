@@ -58,7 +58,7 @@ bool GameScene::init()
 	// Cursor init
 	this->cursor = Cursor::create(this->map->getTileSize(), this->map->getMapSize());
 	this->map->addChild(this->cursor, 0, 0);
-	
+	this->mapPixelPosition = Vec2(0, 0);
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 	// Set up keyboard listener
@@ -136,8 +136,8 @@ void GameScene::updateWaitState(float delta)
 void GameScene::updateMapMovement(Direction dir)
 {
 	// Get cursor position relative to screen (in px)
-	int cursorX = (int)(this->cursor->getPositionX() + this->map->getPositionX());
-	int cursorY = (int)(this->cursor->getPositionY() + this->map->getPositionY());
+	int cursorX = (int)(this->cursor->getPixelPositionX() + this->mapPixelPosition.x);
+	int cursorY = (int)(this->cursor->getPixelPositionY() + this->mapPixelPosition.y);
 
 	// Get window size (in px)
 	Size windowSize = Director::getInstance()->getVisibleSize();
@@ -156,10 +156,10 @@ void GameScene::updateMapMovement(Direction dir)
 		if (cursorX >= (windowSize.width - this->tileSize)) // Cursor is within 1 tile from edge
 		{
 			// Check map-screen bounds
-			if (this->map->getPositionX() > (windowSize.width - mapWidth))
+			if (this->mapPixelPosition.x > (windowSize.width - mapWidth))
 			{
 				// Move map left
-				this->map->setPositionX(this->map->getPositionX() - this->tileSize);
+				this->moveSceneX(this->mapPixelPosition.x - this->tileSize);
 			}
 		}
 	}
@@ -170,10 +170,10 @@ void GameScene::updateMapMovement(Direction dir)
 		if (cursorX < this->tileSize) // Cursor is within 1 tile from edge
 		{
 			// Check map-screen bounds
-			if (this->map->getPositionX() < 0)
+			if (this->mapPixelPosition.x < 0)
 			{
 				// Move map right
-				this->map->setPositionX(this->map->getPositionX() + this->tileSize);
+				this->moveSceneX(this->mapPixelPosition.x + this->tileSize);
 			}
 		}
 	}
@@ -184,10 +184,10 @@ void GameScene::updateMapMovement(Direction dir)
 		if (cursorY >= (windowSize.height - this->tileSize)) // Cursor is within 1 tile from edge
 		{
 			// Check map-screen bounds
-			if (this->map->getPositionY() > (windowSize.height - mapHeight))
+			if (this->mapPixelPosition.y > (windowSize.height - mapHeight))
 			{
 				// Move map down
-				this->map->setPositionY(this->map->getPositionY() - this->tileSize);
+				this->moveSceneY(this->mapPixelPosition.y - this->tileSize);
 			}
 		}
 	}
@@ -198,10 +198,10 @@ void GameScene::updateMapMovement(Direction dir)
 		if (cursorY < this->tileSize) // Cursor is within 1 tile from edge
 		{
 			// Check map-screen bounds
-			if (this->map->getPositionY() < 0)
+			if (this->mapPixelPosition.y < 0)
 			{
 				// Move map up
-				this->map->setPositionY(this->map->getPositionY() + this->tileSize);
+				this->moveSceneY(this->mapPixelPosition.y + this->tileSize);
 			}
 		}
 	}
@@ -228,17 +228,34 @@ void GameScene::updateMapMovement(Direction dir)
 
 void GameScene::moveScene(Vec2 position) // In pixel coords
 {
-	this->runAction(Repeat::create(MoveTo::create(0.2, Vec2(position.x , position.y)), 1));
-	//if (direction == 'u') this->map->runAction(Repeat::create(MoveBy::create(0.2, Vec2(0, (this->tileSize * -1))), 1));
-	//else if (direction == 'd') this->map->runAction(Repeat::create(MoveBy::create(0.2, Vec2(0, this->tileSize)), 1));
-	//else if (direction == 'l') this->map->runAction(Repeat::create(MoveBy::create(0.2, Vec2(this->tileSize, 0)), 1));
-	//else if (direction == 'r') this->map->runAction(Repeat::create(MoveBy::create(0.2, Vec2((this->tileSize * -1), 0)), 1));
+	// Cache pixel position of map
+	this->mapPixelPosition = position;
+
+	//this->map->setPosition(this->mapPixelPosition);
+	this->map->stopAllActions();
+	this->map->runAction(MoveTo::create(0.4f, this->mapPixelPosition));
+}
+
+void GameScene::moveSceneX(float positionX)
+{
+	this->moveScene(Vec2(positionX, this->mapPixelPosition.y));
+}
+
+void GameScene::moveSceneY(float positionY)
+{
+	this->moveScene(Vec2(this->mapPixelPosition.x, positionY));
 }
 
 void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event)
 {
 	log("keyPressed");
 	
+	if (keyCode == EventKeyboard::KeyCode::KEY_ESCAPE)
+	{
+		Director::getInstance()->end();
+		return;
+	}
+
 	if (GAMESTATE_SELECT == cur_state)
 	{
 		if (keyCode == EventKeyboard::KeyCode::KEY_UP_ARROW)
