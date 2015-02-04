@@ -78,6 +78,8 @@ public:
 	// Map
 
 	// Map movement method
+	void updateMapMovement();
+
 	void move(Vec2 position);
 	void moveScene(Vec2 position);
 
