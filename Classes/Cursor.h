@@ -46,6 +46,11 @@ public:
 	int getY();
 
 	cocos2d::Vec2 getXY();
+
+	// Gets the "pixel position" of the cursor, relative to the map
+	cocos2d::Vec2 getPixelPosition();
+	int getPixelPositionX();
+	int getPixelPositionY();
 };
 
 #endif

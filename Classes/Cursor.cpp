@@ -56,17 +56,22 @@ bool Cursor::init(const cocos2d::Size tileSize, const cocos2d::Size mapSize)
 
 void Cursor::move(int dx, int dy)
 {
-	curX += dx;
-	curY += dy;
+	int prevX = this->curX;
+	int prevY = this->curY;
+
+	this->curX += dx;
+	this->curY += dy;
 
 	// Fix if outside boundaries
-	if (curX < 0) curX = 0;
-	else if (curX >= this->mapSize.width) curX = this->mapSize.width - 1;
+	if (this->curX < 0) this->curX = 0;
+	else if (this->curX >= this->mapSize.width) this->curX = this->mapSize.width - 1;
 
-	if (curY < 0) curY = 0;
-	else if (curY >= this->mapSize.height) curY = this->mapSize.height - 1;
+	if (this->curY < 0) this->curY = 0;
+	else if (this->curY >= this->mapSize.height) this->curY = this->mapSize.height - 1;
 	
-	this->setPosition(Vec2(curX  * this->tileSize.width, curY * this->tileSize.height));
+	// Calc new position deltas
+	Vec2 position = Vec2((this->curX - prevX) * this->tileSize.width, (this->curY - prevY) * this->tileSize.height);
+	this->runAction(MoveBy::create(0.2f, position)); // Run action
 }
 
 void Cursor::move(Vec2 delta)
@@ -76,17 +81,21 @@ void Cursor::move(Vec2 delta)
 
 void Cursor::moveToXY(int x, int y)
 {
-	curX = x;
-	curY = y;
+	this->curX = x;
+	this->curY = y;
 
 	// Fix if outside boundaries
-	if (curX < 0) curX = 0;
-	else if (curX >= this->mapSize.width) curX = this->mapSize.width - 1;
+	if (this->curX < 0) this->curX = 0;
+	else if (this->curX >= this->mapSize.width) this->curX = this->mapSize.width - 1;
 
-	if (curY < 0) curY = 0;
-	else if (curY >= this->mapSize.height) curY = this->mapSize.height - 1;
+	if (this->curY < 0) this->curY = 0;
+	else if (this->curY >= this->mapSize.height) this->curY = this->mapSize.height - 1;
 
-	this->runAction(Repeat::create(MoveTo::create(0.1, Vec2(curX, curY)), 1));
+	// Calc new position
+	Vec2 position = Vec2(this->curX, this->curY);
+
+	this->stopAllActions();
+	this->runAction(MoveTo::create(0.2f, position)); // Run action
 }
 
 void Cursor::moveToXY(Vec2 delta)
@@ -96,15 +105,30 @@ void Cursor::moveToXY(Vec2 delta)
 
 int Cursor::getX()
 {
-	return curX;
+	return this->curX;
 }
 
 int Cursor::getY()
 {
-	return curY;
+	return this->curY;
 }
 
 Vec2 Cursor::getXY()
 {
-	return Vec2(curX, curY);
+	return Vec2(this->curX, this->curY);
+}
+
+Vec2 Cursor::getPixelPosition()
+{
+	return Vec2(this->curX * this->tileSize.width, this->curY * this->tileSize.height);
+}
+
+int Cursor::getPixelPositionX()
+{
+	return (int)(this->curX * this->tileSize.width);
+}
+
+int Cursor::getPixelPositionY()
+{
+	return (int)(this->curY * this->tileSize.height);
 }
