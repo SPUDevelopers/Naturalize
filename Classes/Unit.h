@@ -5,16 +5,11 @@
 #include <string>
 #include "cocos2d.h"
 
-#define MAX_HEALTH 10
+#include "NatTypes.h"
 
-// Some gloabal variables *(how global is this global? move to game scene?)*
-//The attack type represents the kind of damage a unit deals
-//This is compared to a unit's defense type to multiply or mitigate incoming damage
-enum attackType {normal = 0, fire = 1, poison = 2, carni = 3, explode = 4};
-enum defenseType {normal = 0, armor = 1, flying = 2, plant = 3};
-//The movement type determines movement penalties imposed by tiles
-//A flying unit is less affected by hills than one on foot, for example
-enum movementType {foot = 0, wheels = 1, flying = 2, floating = 3};
+using namespace Naturalize;
+
+#define MAX_HEALTH 10
 
 class Unit : public cocos2d::Node
 {
@@ -35,11 +30,11 @@ private:
 
 	//The attack type represents the kind of damage a unit deals
 	//This is compared to a unit's defense type to multiply or mitigate incoming damage
-	attackType atkType;	
-	defenseType defType;
+	AttackType atkType;	
+	DefenseType defType;
 	//The movement type determines movement penalties imposed by tiles
 	//A flying unit is less affected by hills than a unit on foot, for example
-	movementType movType;
+	MoveType movType;
 
 	bool faction; //The faction/race of the unit (0 for humans, 1 for plants). Determines various affects.
 	//std::list<std::string> actions; //List of all the unit's potential actions. Implement differently?
@@ -61,7 +56,7 @@ private:
 	/* Takes incoming damage, factors in the type of damage, adjusts the damage 
 	using the damage type/defense type table, adjusts damage for the unit's raw
 	defensive power, then subtracts the final total from the unit's health.*/
-	void takeDmg(int damage, attackType dmgType); //Add something if health hits 0?
+	void takeDmg(int damage, AttackType dmgType); //Add something if health hits 0?
 	
 	/*Uses the unit's current health and raw damage output to return an int value of damage being dealt by the unit*/
 	int dealDmg();
@@ -78,9 +73,9 @@ private:
 	int getHealth();
 	int getAtkPow();
 	int getDefPow();
-	attackType getAtkType();
-	defenseType getDefType();
-	movementType getMovType();
+	AttackType getAtkType();
+	DefenseType getDefType();
+	MoveType getMovType();
 	int getAtkRange();
 	int getMovSpd();
 	int getVisionRange();

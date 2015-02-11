@@ -76,3 +76,27 @@ std::string Naturalize::GetStringFromMoveType(Naturalize::MoveType movetype)
 
 	return "";
 }
+
+Naturalize::AttackType Naturalize::GetAtkTypeFromString(std::string name)
+{
+	// TODO
+	return ATKTYPE_UNKNOWN;
+}
+
+std::string Naturalize::GetStringFromAtkType(Naturalize::AttackType movetype)
+{
+	// TODO
+	return "";
+}
+
+Naturalize::DefenseType Naturalize::GetDefTypeFromString(std::string name)
+{
+	// TODO
+	return DEFTYPE_UNKNOWN;
+}
+
+std::string Naturalize::GetStringFromDefType(Naturalize::DefenseType deftype)
+{
+	// TODO
+	return "";
+}
