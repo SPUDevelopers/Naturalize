@@ -36,7 +36,7 @@ private:
 	//A flying unit is less affected by hills than a unit on foot, for example
 	MoveType movType;
 
-	bool faction; //The faction/race of the unit (0 for humans, 1 for plants). Determines various affects.
+	FactionType faction; //The faction/race of the unit (0 for humans, 1 for plants). Determines various affects.
 	//std::list<std::string> actions; //List of all the unit's potential actions. Implement differently?
 
 	public:
