@@ -5,6 +5,9 @@
 
 #include "TileMgr.h"
 #include "Cursor.h"
+#include "Unit.h"
+
+#include <map>
 
 enum GameSceneState
 {
@@ -37,6 +40,10 @@ private:
 
 	// Tile size
 	float tileSize;
+
+	// List of all units
+	typedef std::map<unsigned short, Unit*> UNITLIST;
+	UNITLIST unitList;
 	
 //
 //	Public class variables

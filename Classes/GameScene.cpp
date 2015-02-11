@@ -282,6 +282,60 @@ void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 			this->cursor->move(1, 0);
 			this->updateMapMovement(DIRECTION_RIGHT);
 		}
+
+		if (keyCode == EventKeyboard::KeyCode::KEY_SPACE)
+		{
+			log("SPACE was pressed");
+
+			// Get cursor position
+			int unitX = this->cursor->getX();
+			int unitY = this->cursor->getY();
+
+			// Make key value
+			unsigned short key = ((unitX & 0xFF) << 8) | (unitY & 0xFF);
+
+			UNITLIST::iterator it = this->unitList.find(key);
+
+			// Check unit occupancy list
+			if (it != this->unitList.end())
+			{
+				log("We found a unit!");
+				log("Kill 'em");
+
+				this->map->removeChild(it->second);
+				it->second->release(); // Decrement reference count
+
+				this->unitList.erase(it);
+			}
+		}
+
+		if (keyCode == EventKeyboard::KeyCode::KEY_A)
+		{
+			log("A was pressed");
+
+			// Get cursor position
+			int unitX = this->cursor->getX();
+			int unitY = this->cursor->getY();
+
+			// Make key value
+			unsigned short key = ((unitX & 0xFF) << 8) | (unitY & 0xFF);
+
+			UNITLIST::iterator it = this->unitList.find(key);
+
+			if (it == this->unitList.end())
+			{
+				Unit *myunit = Unit::create(
+					cocos2d::Size(this->tileSize, this->tileSize),
+					unitX, unitY, 0);
+
+				this->map->addChild(myunit);
+				myunit->setPosition(this->cursor->getPixelPosition());
+
+				// Add unit to master list
+				this->unitList[key] = myunit;
+				myunit->retain(); // Increment reference count
+			}
+		}
 	}
 }
 

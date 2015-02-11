@@ -15,10 +15,10 @@ Unit::Unit(int x, int y, int op)
 	cost = 5;
 	visionRange = 3;
 	player = op;
-	atkType = normal;
-	movType = foot;
-	defType = normal;
-	faction = 0;
+	atkType = ATKTYPE_NORMAL;
+	movType = MOVETYPE_INFANTRY;
+	defType = DEFTYPE_NORMAL;
+	faction = FACTION_HUMAN;
 	//list<string> actions; Not sure how we want to implement this yet
 	isActive = false;
 	isSelected = false;
@@ -32,7 +32,7 @@ Unit* Unit::create(const cocos2d::Size tileSize, int x, int y, int op)
 {
 	Unit *ret = new (std::nothrow) Unit(x, y, op);
 
-	if (ret->init(tileSize))
+	if (ret->init(tileSize, x, y, op))
 	{
 		//Enable garbage collection
 		ret->autorelease();
@@ -59,7 +59,7 @@ bool Unit::init(const cocos2d::Size tileSize, int x, int y, int op)
 
 	//Cre3ate sprite and attach
 	this->unitsprite = cocos2d::Sprite::create("maps/test/lumberjack.png");
-	this->unitsprite->setPosition(Vec21(64, 64));
+	this->unitsprite->setPosition(Vec2(64, 64));
 	this->addChild(this->unitsprite);
 
 	return true;
@@ -68,17 +68,17 @@ bool Unit::init(const cocos2d::Size tileSize, int x, int y, int op)
 //list<string> getActions;
 //list<string> uniqueActions;
 
-void takeDmg(int damage, attackType dmgType)
+void Unit::takeDmg(int damage, AttackType dmgType)
 {
 	//Look up damage influence
-	dmgMul = 1; //Place holder - damage type table will return this value
+	int dmgMul = 1; //Place holder - damage type table will return this value
 	damage *= dmgMul;
 	damage -= defPow;	//How defPow affects incoming damage needs testing
 	if (damage < 1) damage = 1;
 	health -= (int)(damage);
 }
 
-int dealDmg()
+int Unit::dealDmg()
 {
 	//Algorithm subject to change - how health affects damage needs testing
 	int damage = (int)(atkPow * (health/MAX_HEALTH));
@@ -86,7 +86,7 @@ int dealDmg()
 	return damage;
 }
 
-void heal(int amount)
+void Unit::heal(int amount)
 {
 	health += amount;
 	if (health >MAX_HEALTH) health = MAX_HEALTH;
@@ -98,24 +98,24 @@ void heal(int amount)
 } Kill from outside?
 */
 
-int getHealth() { return health; }
-int getAtkPow() { return atkPow; }
-int getDefPow() { return defPow; }
-attackType getAtkType() { return atkType(); }
-defenseType getDefType() { return defType(); }
-movementType getMovType() { return movType(); }
-int getAtkRange() { return atkRange; }
-int getMovSpd() { return movSpd; }
-int getVisionRange() { return visionRange; }
-int getCost() { return getCost; }
+int Unit::getHealth() { return health; }
+int Unit::getAtkPow() { return atkPow; }
+int Unit::getDefPow() { return defPow; }
+AttackType Unit::getAtkType() { return atkType; }
+DefenseType Unit::getDefType() { return defType; }
+MoveType Unit::getMovType() { return movType; }
+int Unit::getAtkRange() { return atkRange; }
+int Unit::getMovSpd() { return movSpd; }
+int Unit::getVisionRange() { return visionRange; }
+int Unit::getCost() { return cost; }
 
-bool canAttack()
+bool Unit::canAttack()
 {
 	return health; //If health is 0, it cannot attack; otherwise, swing away
 }
 
 
-bool canCombine()
+bool Unit::canCombine()
 {
 	if (health < 10 && health >1) return true;
 	else return false; //Only living, damaged units can be combined
