@@ -226,7 +226,7 @@ void GameScene::updateMapMovement(Direction dir)
 	this->cursor->moveToXY(newPosition.x, newPosition.y);
 }*/
 
-void GameScene::moveScene(Vec2 position) // In pixel coords
+void GameScene::moveSceneTo(Vec2 position) // In pixel coords
 {
 	// Cache pixel position of map
 	this->mapPixelPosition = position;
@@ -236,14 +236,22 @@ void GameScene::moveScene(Vec2 position) // In pixel coords
 	this->map->runAction(MoveTo::create(0.4f, this->mapPixelPosition));
 }
 
+void GameScene::moveSceneXY(float x, float y) // In pixel coords
+{
+	Vec2 moveDelta(x, y);
+	this->mapPixelPosition = Vec2(this->mapPixelPosition.x + x, this->mapPixelPosition.y + y);
+	this->map->stopAllActions();
+	this->map->runAction(MoveBy::create(0.4f, moveDelta));
+}
+
 void GameScene::moveSceneX(float positionX)
 {
-	this->moveScene(Vec2(positionX, this->mapPixelPosition.y));
+	this->moveSceneTo(Vec2(positionX, this->mapPixelPosition.y));
 }
 
 void GameScene::moveSceneY(float positionY)
 {
-	this->moveScene(Vec2(this->mapPixelPosition.x, positionY));
+	this->moveSceneTo(Vec2(this->mapPixelPosition.x, positionY));
 }
 
 void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event *event)
@@ -350,15 +358,16 @@ void GameScene::onTouchesBegan(const std::vector<cocos2d::Touch*> &touches, coco
 	
 	auto touch = *touches.begin();
 	
-	// TODO: Convert this to tile coordinates
-	this->cursor->moveToXY(touch->getLocation());
+	Vec2 location = touch->getLocation();
+	this->cursor->moveToXY((location.x / this->tileSize), (location.y / this->tileSize));
 }
 
 void GameScene::onTouchesMoved(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)
 {
 	log("touchesMoved");
 	auto touch = *touches.begin();
-	this->moveScene(touch->getDelta());
+	Vec2 delta = touch->getDelta();
+	//this->moveSceneXY(delta.x, delta.y);
 }
 
 void GameScene::onTouchesEnded(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)

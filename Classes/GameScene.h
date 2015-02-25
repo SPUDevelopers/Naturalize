@@ -100,7 +100,8 @@ public:
 	void updateMapMovement(Direction dir);
 
 	// Moves the map to the specified x,y (in px)
-	void moveScene(Vec2 position);
+	void moveSceneTo(Vec2 position);
+	void moveSceneXY(float x, float y);
 	void moveSceneX(float positionX);
 	void moveSceneY(float positionY);
 
