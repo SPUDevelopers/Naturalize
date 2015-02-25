@@ -59,6 +59,7 @@ public:
 	class CanMoveTile
 	{
 	public:
+		int x, y; // The tile's coordinates
 		int prevX, prevY;	// Previous tile where came from
 		int costToGetHere;	// Cost to get to this tile
 	};
@@ -68,8 +69,9 @@ public:
 	CANMOVETILELIST moveTileList;
 
 	// Recalculates all possible movement tiles for a given unit.
-	void updateMoveTiles(const Unit *unit);
+	void updateMoveTiles(Unit *unit);
 
+	// THIS FUNCTION SHOULD NOT BE CALLED OUTSIDE OF updateMoveTiles!!!
 	// Recursively checks all possible movement tiles based on cost.
 	void checkMove(int x, int y, int prevX, int prevY, int curMovePoints, int totalMovePoints, MoveType type);
 
