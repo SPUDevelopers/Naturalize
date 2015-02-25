@@ -370,3 +370,72 @@ void GameScene::onTouchesCancelled(const std::vector<cocos2d::Touch*> &touches, 
 {
 	log("touchesCancelled");
 }
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+// Unit stuff
+
+void GameScene::updateMoveTiles(const Unit *unit)
+{
+	// Empty the list of valid movement tiles
+	moveTileList.clear();
+
+	
+}
+
+void GameScene::checkMove(int x, int y, int prevX, int prevY, int curMovePoints, int totalMovePoints, MoveType type)
+{
+	MapTile tile;
+
+	if (!this->tileMgr.getTileFromXY(&tile, x, y))
+	{
+		// Tile does not exist, out of bounds!
+		return;
+	}
+
+	// Calculate movement points left after going to this tile
+	if (type <= MOVETYPE_UNKNOWN || type >= MOVETYPE_COUNT) type = MOVETYPE_INFANTRY;
+
+	int pointsLeft = curMovePoints - tile.moveCost[type];
+	int totalCost = totalMovePoints - pointsLeft;
+
+	// Check if tile is out of range
+	if (pointsLeft < 0) return;
+
+	// Make key value
+	unsigned short key = ((x & 0xFF) << 8) | (y & 0xFF);
+
+	// Check if the current tile is already in the list of accessible tiles
+	CANMOVETILELIST::iterator it = moveTileList.find(key);
+
+	if (it != moveTileList.end())
+	{
+		// If the new path to this tile is less than the previous path, update it!
+		CanMoveTile *pmt = &it->second;
+
+		if (totalCost < pmt->costToGetHere)
+		{
+			// This is now the new shortest path to get to this tile
+			pmt->prevX = prevX;
+			pmt->prevY = prevY;
+			pmt->costToGetHere = totalCost;
+		}
+
+		return;
+	}
+
+	// Else, create a new CanMoveTile
+	CanMoveTile newTile;
+	newTile.prevX = prevX;
+	newTile.prevY = prevY;
+	newTile.costToGetHere = totalCost;
+
+	// Add to move tile list
+	moveTileList[key] = newTile;
+
+	// Recursively check around this tile (with exception of previous tile)
+	if (!(x + 1 == prevX && y == prevY)) checkMove(x + 1, y, x, y, pointsLeft, totalMovePoints, type);
+	if (!(x - 1 == prevX && y == prevY)) checkMove(x - 1, y, x, y, pointsLeft, totalMovePoints, type);
+	if (!(x == prevX && y - 1 == prevY)) checkMove(x, y - 1, x, y, pointsLeft, totalMovePoints, type);
+	if (!(x == prevX && y + 1 == prevY)) checkMove(x, y + 1, x, y, pointsLeft, totalMovePoints, type);
+}

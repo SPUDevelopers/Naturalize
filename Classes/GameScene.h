@@ -40,10 +40,6 @@ private:
 
 	// Tile size
 	float tileSize;
-
-	// List of all units
-	typedef std::map<unsigned short, Unit*> UNITLIST;
-	UNITLIST unitList;
 	
 //
 //	Public class variables
@@ -54,6 +50,33 @@ public:
 
 	float panSpeed = 10;
 	
+	/////////////////////////////////////////////////////////////////////////
+	// Units
+	typedef std::map<unsigned short, Unit*> UNITLIST;
+	UNITLIST unitList; // List of all units in play
+
+	// Movement tile class
+	class CanMoveTile
+	{
+	public:
+		int prevX, prevY;	// Previous tile where came from
+		int costToGetHere;	// Cost to get to this tile
+	};
+	
+	// List of valid movement tiles
+	typedef std::map<unsigned short, CanMoveTile> CANMOVETILELIST;
+	CANMOVETILELIST moveTileList;
+
+	// Recalculates all possible movement tiles for a given unit.
+	void updateMoveTiles(const Unit *unit);
+
+	// Recursively checks all possible movement tiles based on cost.
+	void checkMove(int x, int y, int prevX, int prevY, int curMovePoints, int totalMovePoints, MoveType type);
+
+//
+//	Methods
+//
+public:
 	/////////////////////////////////////////////////////////////////////////
 	// Game Loop
 
@@ -79,6 +102,11 @@ public:
 	void updateActionState(float delta);
 	void updateTargetState(float delta);
 	void updateWaitState(float delta);
+
+	/////////////////////////////////////////////////////////////////////////
+	// Unit Movement
+
+
 
 	/////////////////////////////////////////////////////////////////////////
 	// Input
