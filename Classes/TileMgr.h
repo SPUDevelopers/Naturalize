@@ -42,21 +42,27 @@ private:
 	// Load tile objects from file.
 	bool loadTileset(const std::string &filename);
 
+	/////////////////////////
+	// These functions are internal helpers to help populate a MapTile instance
+
 	// Set buff based on buff type and faction.
 	bool setTileBuff(const std::string &typeName, const std::string &factionName, const int value, MapTile *mapTile);
 
 	// Set movement cost based on movement type.
 	bool setTileMoveCost(const std::string &typeName, const int value, MapTile *mapTile);
 
+	//
+	/////////////////////////
+
 public:
-	// Get tile object from specified location on map.
-	MapTile getTileFromXY(cocos2d::Point pt);
+	// Get tile object from specified location on map. Returns true if successful.
+	bool getTileFromXY(MapTile *pmt, cocos2d::Point pt);
 
-	// Get tile object from specified location on map.
-	MapTile getTileFromXY(int x, int y);
+	// Get tile object from specified location on map. Returns true if successful.
+	bool getTileFromXY(MapTile *pmt, int x, int y);
 
-	// Get tile object from specified type.
-	MapTile getTileFromType(const std::string &tilename);
+	// Get tile object from specified type. Returns true if successful.
+	bool getTileFromType(MapTile *pmt, const std::string &tilename);
 
 	// Returns number of tile definitions.
 	int getCount();

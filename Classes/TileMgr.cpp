@@ -236,12 +236,12 @@ bool TileMgr::setTileMoveCost(const std::string &typeName, const int value, MapT
 	return true;
 }
 
-MapTile TileMgr::getTileFromXY(cocos2d::Point pt)
+bool TileMgr::getTileFromXY(MapTile *pmt, cocos2d::Point pt)
 {
 	if (nullptr == this->tmxMap)
 	{
 		log("Missing TMX pointer!");
-		return MapTile(); // Return default tile
+		return false; // Return default tile
 	}
 
 	//
@@ -256,7 +256,7 @@ MapTile TileMgr::getTileFromXY(cocos2d::Point pt)
 	if (!properties.size())
 	{
 		log("Failed to obtain tile properties!");
-		return MapTile(); // Return default tile
+		return false;
 	}
 
 	//
@@ -268,18 +268,18 @@ MapTile TileMgr::getTileFromXY(cocos2d::Point pt)
 	if (!tilename.length())
 	{
 		log("Failed to obtain tile name!");
-		return MapTile();
+		return false;
 	}
 
-	return getTileFromType(tilename); // Get tile from type name
+	return getTileFromType(pmt, tilename); // Get tile from type name
 }
 
-MapTile TileMgr::getTileFromXY(int x, int y)
+bool TileMgr::getTileFromXY(MapTile *pmt, int x, int y)
 {
-	return getTileFromXY(cocos2d::Point(x, y));
+	return getTileFromXY(pmt, cocos2d::Point(x, y));
 }
 
-MapTile TileMgr::getTileFromType(const std::string &tilename)
+bool TileMgr::getTileFromType(MapTile *pmt, const std::string &tilename)
 {
 	std::string lowerName = StringToLower(tilename); // Convert to lowercase
 
@@ -289,10 +289,11 @@ MapTile TileMgr::getTileFromType(const std::string &tilename)
 	if (it == this->tileDefs.end())
 	{
 		log("Could not find tile definition for tile: %s", tilename.c_str());
-		return MapTile(); // Return default tile
+		return false;
 	}
 
-	return it->second;
+	*pmt = it->second; // Copy the MapTile data to the passed in pointer
+	return true;
 }
 
 int TileMgr::getCount()

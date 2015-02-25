@@ -39,7 +39,7 @@ private:
 	FactionType faction; //The faction/race of the unit (0 for humans, 1 for plants). Determines various affects.
 	//std::list<std::string> actions; //List of all the unit's potential actions. Implement differently?
 
-	public:
+public:
 	Unit(int x, int y, int op); //This will eventually take in a text file as well
 	~Unit(); 
 
@@ -88,6 +88,10 @@ private:
 	/*Returns true if the unit is damaged, but alive, and false if otherwise.
 	Units cannot be combined if they are not damaged.*/
 	bool canCombine();
+
+	// Small getters
+	int getX() { return xcord; }
+	int getY() { return ycord; }
 
 	bool isActive; //The unit can be selected by the player controlling it this turn
 	bool isSelected;	//The unit is currently selected

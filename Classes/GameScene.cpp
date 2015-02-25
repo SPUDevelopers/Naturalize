@@ -291,9 +291,9 @@ void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 			this->updateMapMovement(DIRECTION_RIGHT);
 		}
 
-		if (keyCode == EventKeyboard::KeyCode::KEY_SPACE)
+		if (keyCode == EventKeyboard::KeyCode::KEY_DELETE)
 		{
-			log("SPACE was pressed");
+			log("DELETE was pressed");
 
 			// Get cursor position
 			int unitX = this->cursor->getX();
@@ -344,6 +344,35 @@ void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 				myunit->retain(); // Increment reference count
 			}
 		}
+
+		if (keyCode == EventKeyboard::KeyCode::KEY_SPACE)
+		{
+			log("SPACE was pressed");
+
+			// Get cursor position
+			int unitX = this->cursor->getX();
+			int unitY = this->cursor->getY();
+
+			// Make key value
+			unsigned short key = ((unitX & 0xFF) << 8) | (unitY & 0xFF);
+
+			UNITLIST::iterator it = this->unitList.find(key);
+
+			// Check unit occupancy list
+			if (it != this->unitList.end())
+			{
+				log("Searching for valid move tiles");
+				updateMoveTiles(it->second);
+				log("Done searching");
+
+				for (CANMOVETILELIST::iterator cmt_it = moveTileList.begin(); cmt_it != moveTileList.end(); cmt_it++)
+				{
+					Sprite *mySprite = Sprite::create("maps/test/cursorsprite.png");
+					this->map->addChild(mySprite);
+					mySprite->setPosition(cmt_it->second.x * this->tileSize, cmt_it->second.y * this->tileSize);
+				}
+			}
+		}
 	}
 }
 
@@ -378,4 +407,72 @@ void GameScene::onTouchesEnded(const std::vector<cocos2d::Touch*> &touches, coco
 void GameScene::onTouchesCancelled(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)
 {
 	log("touchesCancelled");
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+// Unit stuff
+
+void GameScene::updateMoveTiles(Unit *unit)
+{
+	// Empty the list of valid movement tiles
+	moveTileList.clear();
+
+	// Start the recursion!!!!
+	checkMove(unit->getX(), unit->getY(), -1, -1, unit->getMovSpd(), unit->getMovSpd(), unit->getMovType());
+}
+
+void GameScene::checkMove(int x, int y, int prevX, int prevY, int curMovePoints, int totalMovePoints, MoveType type)
+{
+	MapTile tile;
+
+	if (!this->tileMgr.getTileFromXY(&tile, x, y))
+	{
+		// Tile does not exist, out of bounds!
+		return;
+	}
+
+	// Calculate movement points left after going to this tile
+	if (type <= MOVETYPE_UNKNOWN || type >= MOVETYPE_COUNT) type = MOVETYPE_INFANTRY;
+
+	int pointsLeft = curMovePoints - ((prevX == -1 || prevY == -1) ? 0 : tile.moveCost[type]);
+	int totalCost = totalMovePoints - pointsLeft;
+
+	// Check if tile is out of range
+	if (pointsLeft < 0)
+		return;
+
+	// Make key value
+	unsigned short key = ((x & 0xFF) << 8) | (y & 0xFF);
+
+	// Check if the current tile is already in the list of accessible tiles
+	CANMOVETILELIST::iterator it = moveTileList.find(key);
+
+	if (it != moveTileList.end())
+	{
+		if (totalCost >= it->second.costToGetHere)
+			return; // If this current path is not optimal, quit!
+	}
+
+	// Update 
+	moveTileList[key].x = x;
+	moveTileList[key].y = y;
+	moveTileList[key].prevX = prevX;
+	moveTileList[key].prevY = prevY;
+	moveTileList[key].costToGetHere = totalCost;
+
+	// If exhausted all points, quit!
+	if (pointsLeft == 0)
+		return;
+
+	// Recursively check around this tile (with exception of previous tile... unless previous tile is invalid)
+	if ((prevX == -1 && prevY == -1) || !(x + 1 == prevX && y == prevY))
+		checkMove(x, y + 1, x, y, pointsLeft, totalMovePoints, type);
+	if ((prevX == -1 && prevY == -1) || !(x - 1 == prevX && y == prevY))
+		checkMove(x, y - 1, x, y, pointsLeft, totalMovePoints, type);
+	if ((prevX == -1 && prevY == -1) || !(x == prevX && y - 1 == prevY))
+		checkMove(x + 1, y, x, y, pointsLeft, totalMovePoints, type);
+	if ((prevX == -1 && prevY == -1) || !(x == prevX && y + 1 == prevY))
+		checkMove(x - 1, y, x, y, pointsLeft, totalMovePoints, type);
+	
 }
