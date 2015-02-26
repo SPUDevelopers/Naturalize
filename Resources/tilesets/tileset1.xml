@@ -25,7 +25,7 @@
     <buff type="defense" faction="plant">0</buff>
 
     <!-- MOVEMENT COST -->
-    <movecost type="infantry">1</movecost>
+    <movecost type="infantry">2</movecost>
     <movecost type="flying">1</movecost>
     <movecost type="vehicle">1</movecost>
   </tile>

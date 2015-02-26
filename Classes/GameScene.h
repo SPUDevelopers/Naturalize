@@ -28,6 +28,16 @@ enum Direction
 
 class GameScene : public cocos2d::Layer
 {
+	///////////////////////////////////////////////////
+	// TESTING
+
+private:
+	Label *debugText;
+	std::list<Sprite *> moveSpriteList;
+
+	//
+	///////////////////////////////////////////////////
+
 private:
 	// Holds current game state
 	GameSceneState cur_state;
@@ -50,16 +60,25 @@ public:
 
 	float panSpeed = 10;
 	
+//
+//	Module-specific code
+//
+
 	/////////////////////////////////////////////////////////////////////////
 	// Units
+
+private:
 	typedef std::map<unsigned short, Unit*> UNITLIST;
 	UNITLIST unitList; // List of all units in play
+
+	// Unit key helpers
+	unsigned short packUnitKey(int x, int y);
+	void unpackUnitKey(unsigned short key, int *px, int *py);
 
 	// Movement tile class
 	class CanMoveTile
 	{
 	public:
-		int x, y; // The tile's coordinates
 		int prevX, prevY;	// Previous tile where came from
 		int costToGetHere;	// Cost to get to this tile
 	};
@@ -73,7 +92,7 @@ public:
 
 	// THIS FUNCTION SHOULD NOT BE CALLED OUTSIDE OF updateMoveTiles!!!
 	// Recursively checks all possible movement tiles based on cost.
-	void checkMove(int x, int y, int prevX, int prevY, int curMovePoints, int totalMovePoints, MoveType type);
+	void checkMove(int x, int y, int prevX, int prevY, int curCost, int maxCost, MoveType type, bool atStart = false);
 
 //
 //	Methods
