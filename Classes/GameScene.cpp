@@ -32,7 +32,7 @@ bool GameScene::init()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
 	// Create a tmx tile map
-	std::string mapFilename = "maps/test/test.tmx";
+	std::string mapFilename = "maps/test/test_sm.tmx";
 
 	this->map = TMXTiledMap::create(mapFilename);
 	this->map->setScale(1, 1);
@@ -93,7 +93,7 @@ bool GameScene::init()
 
 	debugText = Label::create("<Debug>", "Courier New", 12);
 	this->addChild(debugText, 1);
-	debugText->setPosition(78, 665);
+	debugText->setPosition(78, 655);
 
 	// Kick the text update
 	keyPressed(EventKeyboard::KeyCode::KEY_0, nullptr);
@@ -424,7 +424,13 @@ void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 		debugString.append("\n");
 
 		// Check maptile
-		int gid = this->map->getLayer("background")->getTileGIDAt(this->cursor->getXY());
+		int tiledX = this->cursor->getX();
+		int tiledY = (this->map->getMapSize().height - 1) - this->cursor->getY();
+
+		debugString.appendWithFormat("TilePt: (%2d, %2d)\n", tiledX, tiledY);
+		debugString.append("\n");
+
+		int gid = this->map->getLayer("background")->getTileGIDAt(Point(tiledX, tiledY));
 
 		debugString.appendWithFormat(" Tile GID: %d\n", gid);
 
