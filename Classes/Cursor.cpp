@@ -92,10 +92,10 @@ void Cursor::moveToXY(int x, int y)
 	else if (this->curY >= this->mapSize.height) this->curY = this->mapSize.height - 1;
 
 	// Calc new position
-	Vec2 position = Vec2(this->curX, this->curY);
+	Vec2 position = Vec2((this->curX * this->tileSize.width), (this->curY * tileSize.height));
 
 	this->stopAllActions();
-	this->runAction(MoveTo::create(0.2f, position)); // Run action
+	setPosition(position);
 }
 
 void Cursor::moveToXY(Vec2 delta)
