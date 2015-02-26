@@ -245,11 +245,23 @@ bool TileMgr::getTileFromXY(MapTile *pmt, cocos2d::Point pt)
 	}
 
 	//
+	//	Check bounds
+	//
+
+	cocos2d::Size mapSize = this->tmxMap->getMapSize();
+
+	if (pt.x < 0 || pt.y < 0 || pt.x >= mapSize.width || pt.y >= mapSize.height)
+	{
+		log("Out of bounds");
+		return false;
+	}
+
+	//
 	//	Retrieve GID of tile
 	//
 	
 	// Only look at tiles from background layer (Layer 0)
-	int gid = this->tmxMap->getLayer("background")->getTileGIDAt(pt);
+	int gid = this->tmxMap->getLayer("background")->getTileGIDAt(pt); // !!! This may have problems!
 
 	cocos2d::ValueMap properties = this->tmxMap->getPropertiesForGID(gid).asValueMap();
 

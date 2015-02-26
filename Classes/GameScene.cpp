@@ -27,7 +27,7 @@ bool GameScene::init()
 	{
 		return false;
 	}
-	
+
 	//Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	
@@ -44,10 +44,12 @@ bool GameScene::init()
 	//this->addChild(object, 0, 0);
 
 	// All tiles are aliased by default: set them anti-aliased
+	/* // Anti-aliasing turned off
 	for (const auto& child : map->getChildren())
 	{
 		static_cast<SpriteBatchNode*>(child)->getTexture()->setAntiAliasTexParameters();
 	}
+	//*/
 
 
 	this->tileSize = this->map->getTileSize().width;
@@ -84,6 +86,21 @@ bool GameScene::init()
 
 	// Initialize game state
 	cur_state = GAMESTATE_SELECT;
+
+
+	//////////////////////////////////////////////////////////
+	// DEBUG
+
+	debugText = Label::create("<Debug>", "Courier New", 12);
+	this->addChild(debugText, 1);
+	debugText->setPosition(78, 665);
+
+	// Kick the text update
+	keyPressed(EventKeyboard::KeyCode::KEY_0, nullptr);
+
+	//
+	//////////////////////////////////////////////////////////
+
 
 	this->scheduleUpdate();
 
@@ -292,8 +309,8 @@ void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 			int unitY = this->cursor->getY();
 
 			// Make key value
-			unsigned short key = ((unitX & 0xFF) << 8) | (unitY & 0xFF);
-
+			unsigned short key = packUnitKey(unitX, unitY);
+			
 			UNITLIST::iterator it = this->unitList.find(key);
 
 			// Check unit occupancy list
@@ -318,7 +335,7 @@ void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 			int unitY = this->cursor->getY();
 
 			// Make key value
-			unsigned short key = ((unitX & 0xFF) << 8) | (unitY & 0xFF);
+			unsigned short key = packUnitKey(unitX, unitY);
 
 			UNITLIST::iterator it = this->unitList.find(key);
 
@@ -346,7 +363,7 @@ void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 			int unitY = this->cursor->getY();
 
 			// Make key value
-			unsigned short key = ((unitX & 0xFF) << 8) | (unitY & 0xFF);
+			unsigned short key = packUnitKey(unitX, unitY);
 
 			UNITLIST::iterator it = this->unitList.find(key);
 
@@ -359,12 +376,93 @@ void GameScene::keyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Eve
 
 				for (CANMOVETILELIST::iterator cmt_it = moveTileList.begin(); cmt_it != moveTileList.end(); cmt_it++)
 				{
-					Sprite *mySprite = Sprite::create("maps/test/cursorsprite.png");
+					int x, y;
+					unpackUnitKey(cmt_it->first, &x, &y);
+					
+					Sprite *mySprite = Sprite::create("maps/test/validmove.png");
 					this->map->addChild(mySprite);
-					mySprite->setPosition(cmt_it->second.x * this->tileSize, cmt_it->second.y * this->tileSize);
+					
+					////////////// DEBUG //////////////
+					moveSpriteList.push_back(mySprite);
+					///////////////////////////////////
+
+					mySprite->setPosition(64 + x * this->tileSize, 64 + y * this->tileSize);
 				}
 			}
 		}
+
+		/////////////////////////////////////////////////////////////////
+		// Debug text
+
+		String debugString;
+
+		// Get map position
+		int mapX = (int)round(this->mapPixelPosition.x / this->tileSize);
+		int mapY = (int)round(this->mapPixelPosition.y / this->tileSize);
+
+		debugString.appendWithFormat("   Map: (%2d, %2d)\n", mapX, mapY);
+
+		// Get cursor position
+		int curX = this->cursor->getX();
+		int curY = this->cursor->getY();
+
+		debugString.appendWithFormat("Cursor: (%2d, %2d)\n", curX, curY);
+
+		// Check for unit
+		unsigned short key = packUnitKey(curX, curY);
+		UNITLIST::iterator it = this->unitList.find(key);
+
+		if (it != unitList.end())
+		{
+			debugString.append("<UNIT FOUND>\n");
+		}
+		else
+		{
+			debugString.append("------\n");
+		}
+
+		debugString.append("\n");
+
+		// Check maptile
+		int gid = this->map->getLayer("background")->getTileGIDAt(this->cursor->getXY());
+
+		debugString.appendWithFormat(" Tile GID: %d\n", gid);
+
+		if (gid)
+		{
+			cocos2d::ValueMap properties = this->map->getPropertiesForGID(gid).asValueMap();
+			std::string tilename = properties["name"].asString();
+
+			debugString.appendWithFormat("Tile Name: %-6s\n", tilename.c_str());
+		}
+		
+		// Get tile cost
+		MapTile tile;
+		this->tileMgr.getTileFromXY(&tile, this->cursor->getXY());
+		
+		debugString.appendWithFormat("Tile Cost: %d\n", tile.moveCost[MOVETYPE_INFANTRY]);
+
+		debugString.append("\n");
+		
+		// Check for valid move tiles
+		CANMOVETILELIST::iterator moveIt = moveTileList.find(key);
+
+		if (moveIt != moveTileList.end())
+		{
+			debugString.append("<MOVETILE FOUND>\n");
+			debugString.appendWithFormat("PrevXY: (%2d, %2d)\n", moveIt->second.prevX, moveIt->second.prevY);
+			debugString.appendWithFormat("Total Cost: %d\n", moveIt->second.costToGetHere);
+		}
+		else
+		{
+			debugString.append("------\n\n\n");
+		}
+
+		// Set the text of the label
+		debugText->setString(debugString.getCString());
+
+		//
+		/////////////////////////////////////////////////////////////////
 	}
 }
 
@@ -402,18 +500,45 @@ void GameScene::onTouchesCancelled(const std::vector<cocos2d::Touch*> &touches, 
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
-// Unit stuff
+// Unit methods
+
+//
+//	Unit helpers
+//
+
+unsigned short GameScene::packUnitKey(int x, int y)
+{
+	return (unsigned short)((x & 0xFF) << 8) | (y & 0xFF);
+}
+
+void GameScene::unpackUnitKey(unsigned short key, int *px, int *py)
+{
+	*px = (key >> 8) & 0xFF;
+	*py = key & 0xFF;
+}
+
+//
+//	Unit movement
+//
 
 void GameScene::updateMoveTiles(Unit *unit)
 {
+	///////// DEBUG ////////////
+	// Clear all valid move sprites from the screen
+	for (std::list<Sprite *>::iterator it = moveSpriteList.begin(); it != moveSpriteList.end(); it++)
+	{
+		this->map->removeChild((*it));
+	}
+	////////////////////////////
+
 	// Empty the list of valid movement tiles
 	moveTileList.clear();
 
 	// Start the recursion!!!!
-	checkMove(unit->getX(), unit->getY(), -1, -1, unit->getMovSpd(), unit->getMovSpd(), unit->getMovType());
+	checkMove(unit->getX(), unit->getY(), -1, -1, 0, unit->getMovSpd(), unit->getMovType(), true);
 }
 
-void GameScene::checkMove(int x, int y, int prevX, int prevY, int curMovePoints, int totalMovePoints, MoveType type)
+void GameScene::checkMove(int x, int y, int prevX, int prevY, int curCost, int maxCost, MoveType type, bool atStart)
 {
 	MapTile tile;
 
@@ -422,48 +547,64 @@ void GameScene::checkMove(int x, int y, int prevX, int prevY, int curMovePoints,
 		// Tile does not exist, out of bounds!
 		return;
 	}
+	
+	if (type <= MOVETYPE_UNKNOWN || type >= MOVETYPE_COUNT)
+	{
+		log("Unknown movement type encountered!");
+		type = MOVETYPE_INFANTRY;
+	}
 
-	// Calculate movement points left after going to this tile
-	if (type <= MOVETYPE_UNKNOWN || type >= MOVETYPE_COUNT) type = MOVETYPE_INFANTRY;
+	// Calculate cost of going to this tile
+	int totalCost = 0;
 
-	int pointsLeft = curMovePoints - ((prevX == -1 || prevY == -1) ? 0 : tile.moveCost[type]);
-	int totalCost = totalMovePoints - pointsLeft;
+	// Only add the cost of the current tile if we have moved from the start
+	if (!atStart)
+	{
+		totalCost = curCost + tile.moveCost[type];
+	}
 
 	// Check if tile is out of range
-	if (pointsLeft < 0)
+	if (totalCost > maxCost)
+	{
 		return;
-
-	// Make key value
-	unsigned short key = ((x & 0xFF) << 8) | (y & 0xFF);
+	}
 
 	// Check if the current tile is already in the list of accessible tiles
+	unsigned short key = packUnitKey(x, y);
 	CANMOVETILELIST::iterator it = moveTileList.find(key);
 
 	if (it != moveTileList.end())
 	{
 		if (totalCost >= it->second.costToGetHere)
+		{
 			return; // If this current path is not optimal, quit!
+		}
 	}
 
 	// Update 
-	moveTileList[key].x = x;
-	moveTileList[key].y = y;
 	moveTileList[key].prevX = prevX;
 	moveTileList[key].prevY = prevY;
 	moveTileList[key].costToGetHere = totalCost;
 
 	// If exhausted all points, quit!
-	if (pointsLeft == 0)
+	if (totalCost >= maxCost)
+	{
 		return;
+	}
 
-	// Recursively check around this tile (with exception of previous tile... unless previous tile is invalid)
-	if ((prevX == -1 && prevY == -1) || !(x + 1 == prevX && y == prevY))
-		checkMove(x, y + 1, x, y, pointsLeft, totalMovePoints, type);
-	if ((prevX == -1 && prevY == -1) || !(x - 1 == prevX && y == prevY))
-		checkMove(x, y - 1, x, y, pointsLeft, totalMovePoints, type);
-	if ((prevX == -1 && prevY == -1) || !(x == prevX && y - 1 == prevY))
-		checkMove(x + 1, y, x, y, pointsLeft, totalMovePoints, type);
-	if ((prevX == -1 && prevY == -1) || !(x == prevX && y + 1 == prevY))
-		checkMove(x - 1, y, x, y, pointsLeft, totalMovePoints, type);
+	//
+	//	Recursively check around this tile
+	//
+
+	if (atStart || !(x == prevX && y + 1 == prevY)) // Check up
+		checkMove(x, y + 1, x, y, totalCost, maxCost, type);
 	
+	if (atStart || !(x + 1 == prevX && y == prevY)) // Check right
+		checkMove(x + 1, y, x, y, totalCost, maxCost, type);
+
+	if (atStart || !(x == prevX && y - 1 == prevY)) // Check down
+		checkMove(x, y - 1, x, y, totalCost, maxCost, type);
+
+	if (atStart || !(x - 1 == prevX && y == prevY)) // Check left
+		checkMove(x - 1, y, x, y, totalCost, maxCost, type);
 }
