@@ -487,20 +487,33 @@ void GameScene::keyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Ev
 
 void GameScene::onTouchesBegan(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)
 {
-	log("touchesBegan");
-	
 	auto touch = *touches.begin();
-	
 	Vec2 location = touch->getLocation();
-	this->cursor->moveToXY((location.x / this->tileSize), (location.y / this->tileSize));
+	log("touchesBegan: X:%f Y:%f", location.x, location.y);
+	this->cursor->moveToXY(((location.x - mapPixelPosition.x) / this->tileSize), ((location.y - mapPixelPosition.y) / this->tileSize));
 }
 
 void GameScene::onTouchesMoved(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)
 {
-	log("touchesMoved");
 	auto touch = *touches.begin();
-	Vec2 delta = touch->getDelta();
-	//this->moveSceneXY(delta.x, delta.y);
+	Vec2 location = touch->getDelta();
+	log("touchesMoved: X:%f Y:%f", location.x, location.y);
+	Vec2 moveTo = Vec2(mapPixelPosition.x + location.x, mapPixelPosition.y + location.y);
+
+	// Check boundaries
+	Size windowSize = Director::getInstance()->getVisibleSize();
+	if (moveTo.x >= ((this->map->getMapSize().width * this->tileSize - windowSize.width) * -1) && moveTo.x <= 0 )
+	{
+		this->mapPixelPosition = Vec2(moveTo.x, mapPixelPosition.y);
+		this->map->setPosition(mapPixelPosition);
+	}
+	
+	if (moveTo.y >= ((this->map->getMapSize().height * this->tileSize - windowSize.height) * -1) && moveTo.y <= 0 )
+	{
+		this->mapPixelPosition = Vec2(mapPixelPosition.x, moveTo.y);
+		this->map->setPosition(mapPixelPosition);
+	}
+	
 }
 
 void GameScene::onTouchesEnded(const std::vector<cocos2d::Touch*> &touches, cocos2d::Event *event)
