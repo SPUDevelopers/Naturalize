@@ -94,6 +94,10 @@ private:
 	// Recursively checks all possible movement tiles based on cost.
 	void checkMove(int x, int y, int prevX, int prevY, int curCost, int maxCost, MoveType type, bool atStart = false);
 
+	// Functions for returning movement path
+	CanMoveTile* returnTileStruct(int x, int y);
+	void fillMoveStack(int xCord, int yCord, std::stack<unsigned short> &stack);
+
 //
 //	Methods
 //
