@@ -636,3 +636,32 @@ void GameScene::checkMove(int x, int y, int prevX, int prevY, int curCost, int m
 	if (atStart || !(x - 1 == prevX && y == prevY)) // Check left
 		checkMove(x - 1, y, x, y, totalCost, maxCost, type);
 }
+
+GameScene::CanMoveTile* GameScene::returnTileStruct(int x, int y)
+{
+	unsigned short key = packUnitKey(x, y);
+	CANMOVETILELIST::iterator it = moveTileList.find(key);
+
+	if (it != moveTileList.end())
+	{
+		return(&it->second);
+	}
+	return nullptr;
+}
+
+void GameScene::fillMoveStack(int x, int y, std::stack<unsigned short> &stack)
+{
+	CanMoveTile* tile;
+
+	int xCord = x;
+	int yCord = y;
+
+	stack.push(packUnitKey(xCord, yCord));
+
+	while (tile = returnTileStruct(xCord, yCord), tile != nullptr)
+	{
+		xCord = tile->prevX;
+		yCord = tile->prevY;
+		stack.push(packUnitKey(xCord, yCord));
+	}
+}
