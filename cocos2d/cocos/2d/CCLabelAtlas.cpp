@@ -71,7 +71,7 @@ LabelAtlas* LabelAtlas::create(const std::string& string, const std::string& cha
 bool LabelAtlas::initWithString(const std::string& string, const std::string& charMapFile, int itemWidth, int itemHeight, int startCharMap)
 {
     Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(charMapFile);
-	return initWithString(string, texture, itemWidth, itemHeight, startCharMap);
+    return initWithString(string, texture, itemWidth, itemHeight, startCharMap);
 }
 
 bool LabelAtlas::initWithString(const std::string& string, Texture2D* texture, int itemWidth, int itemHeight, int startCharMap)
@@ -256,7 +256,7 @@ void LabelAtlas::updateColor()
 #if CC_LABELATLAS_DEBUG_DRAW
 void LabelAtlas::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
-    AtlasNode::draw(renderer, transform, transformUpdated);
+    AtlasNode::draw(renderer, transform, _transformUpdated);
 
     _debugDrawNode->clear();
     auto size = getContentSize();

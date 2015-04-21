@@ -29,6 +29,10 @@
 
 NS_CC_BEGIN
 
+/**
+ * Oritened Bounding Box(OBB)
+ * @brief the OBB is similar to the AABB but the bounding box has the same direction as Sprite3D. so it's collistion detection more precise than AABB
+ */
 class CC_DLL OBB
 {
 public:
@@ -85,6 +89,16 @@ public:
     
 protected:
     /*
+    * compute extX, extY, extZ
+    */
+    void computeExtAxis()
+    {
+        _extentX = _xAxis * _extents.x;
+        _extentY = _yAxis * _extents.y;
+        _extentZ = _zAxis * _extents.z;
+    }
+    
+    /*
      * Project point to the target axis
      */
     float projectPoint(const Vec3& point, const Vec3& axis) const;
@@ -109,6 +123,9 @@ public:
     Vec3 _xAxis;    // x axis of obb, unit vector
     Vec3 _yAxis;    // y axis of obb, unit vecotr
     Vec3 _zAxis;    // z axis of obb, unit vector
+    Vec3 _extentX;  // _xAxis * _extents.x
+    Vec3 _extentY;  // _yAxis * _extents.y
+    Vec3 _extentZ;  // _zAxis * _extents.z
     Vec3 _extents;  // obb length along each axis
 };
 

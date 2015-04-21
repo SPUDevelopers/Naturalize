@@ -43,6 +43,10 @@ NS_CC_BEGIN
 
 class MeshVertexData;
 
+/**
+ * the MeshIndexData class.
+ * @brief the MeshIndexData contain all of the indices data which mesh need.
+ */
 class MeshIndexData : public Ref
 {
 public:
@@ -84,6 +88,10 @@ protected:
     friend class Sprite3D;
 };
 
+/**
+ * the MeshVertexData class.
+ * @brief the MeshIndexData contain all of the vertices data which mesh need.
+ */
 class MeshVertexData : public Ref
 {
     friend class Sprite3D;
@@ -114,8 +122,7 @@ public:
 CC_CONSTRUCTOR_ACCESS:
     MeshVertexData();
     virtual ~MeshVertexData();
-    
-    static AABB calculateAABB(const std::vector<float>& vertex, int stride, const std::vector<unsigned short>& index);
+
 protected:
     VertexData*          _vertexData; //mesh vertex data
     VertexBuffer*        _vertexBuffer; // vertex buffer

@@ -40,7 +40,11 @@ NS_CC_BEGIN
 
 // implementation RenderTexture
 RenderTexture::RenderTexture()
-: _FBO(0)
+: _keepMatrix(false)
+, _rtTextureRect(Rect::ZERO)
+, _fullRect(Rect::ZERO)
+, _fullviewPort(Rect::ZERO)
+, _FBO(0)
 , _depthRenderBufffer(0)
 , _oldFBO(0)
 , _texture(0)
@@ -53,10 +57,6 @@ RenderTexture::RenderTexture()
 , _clearStencil(0)
 , _autoDraw(false)
 , _sprite(nullptr)
-, _keepMatrix(false)
-, _rtTextureRect(Rect::ZERO)
-, _fullRect(Rect::ZERO)
-, _fullviewPort(Rect::ZERO)
 , _saveFileCallback(nullptr)
 {
 #if CC_ENABLE_CACHE_TEXTURE_DATA
@@ -383,12 +383,12 @@ void RenderTexture::clearStencil(int stencilValue)
 void RenderTexture::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
     // override visit.
-	// Don't call visit on its children
+    // Don't call visit on its children
     if (!_visible || !isVisitableByVisitingCamera())
     {
         return;
     }
-	
+    
     uint32_t flags = processParentFlags(parentTransform, parentFlags);
 
     Director* director = Director::getInstance();
@@ -553,7 +553,7 @@ void RenderTexture::onBegin()
         director->setProjection(director->getProjection());
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WP8
-        Mat4 modifiedProjection = director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+        auto modifiedProjection = director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
         modifiedProjection = GLViewImpl::sharedOpenGLView()->getReverseOrientationMatrix() * modifiedProjection;
         director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION,modifiedProjection);
 #endif
@@ -572,7 +572,7 @@ void RenderTexture::onBegin()
     else
     {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WP8
-        Mat4 modifiedProjection = director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
+        auto modifiedProjection = director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION);
         modifiedProjection = GLViewImpl::sharedOpenGLView()->getReverseOrientationMatrix() * modifiedProjection;
         director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION, modifiedProjection);
 #endif

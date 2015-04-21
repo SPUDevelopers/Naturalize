@@ -330,7 +330,7 @@ void DataReaderHelper::addDataFromFile(const std::string& filePath)
         DataReaderHelper::addDataFromBinaryCache(contentStr.c_str(),&dataInfo);
     }
 
-	CC_SAFE_DELETE_ARRAY(pBytes);
+	free(pBytes);
 }
 
 void DataReaderHelper::addDataFromFileAsync(const std::string& imagePath, const std::string& plistPath, const std::string& filePath, Ref *target, SEL_SCHEDULE selector)
@@ -422,6 +422,8 @@ void DataReaderHelper::addDataFromFileAsync(const std::string& imagePath, const 
     ssize_t size;
     // FIXME: fileContent is being leaked
     
+    // This getFileData only read exportJson file, it takes only a little time.
+    // Large image files are loaded in DataReaderHelper::addDataFromJsonCache(dataInfo) asynchronously.
     _dataReaderHelper->_getFileMutex.lock();
     unsigned char *pBytes = FileUtils::getInstance()->getFileData(fullPath.c_str() , filereadmode.c_str(), &size);
     _dataReaderHelper->_getFileMutex.unlock();
@@ -429,7 +431,9 @@ void DataReaderHelper::addDataFromFileAsync(const std::string& imagePath, const 
 	Data bytecpy;
     bytecpy.copy(pBytes, size);
     data->fileContent = std::string((const char*)bytecpy.getBytes(), size);
-    CC_SAFE_DELETE_ARRAY(pBytes);
+
+    // fix memory leak for v3.3
+    free(pBytes);
     
     if (str == ".xml")
     {
@@ -1330,6 +1334,8 @@ void DataReaderHelper::addDataFromJsonCache(const std::string& fileContent, Data
             {
                 std::string plistPath = filePath + ".plist";
                 std::string pngPath =  filePath + ".png";
+                ValueMap dict = FileUtils::getInstance()->getValueMapFromFile(dataInfo->baseFilePath + plistPath);
+                if (dict.find("particleLifespan") != dict.end()) continue;
 
                 ArmatureDataManager::getInstance()->addSpriteFrameFromFile((dataInfo->baseFilePath + plistPath).c_str(), (dataInfo->baseFilePath + pngPath).c_str(), dataInfo->filename.c_str());
             }

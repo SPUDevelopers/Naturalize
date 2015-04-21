@@ -28,6 +28,7 @@
 #include "base/CCRef.h"
 #include "base/ccTypes.h"
 #include "math/CCMath.h"
+#include "3d/CCAABB.h"
 
 #include <vector>
 #include <map>
@@ -48,7 +49,25 @@ struct MeshVertexAttrib
 };
 
 
-struct ModelData;
+/** model node data, since 3.3 */
+struct ModelData
+{
+    std::string subMeshId;
+    std::string matrialId;
+    std::vector<std::string> bones;
+    std::vector<Mat4>        invBindPose;
+    
+    virtual ~ModelData()
+    {
+        resetData();
+    }
+    virtual void resetData()
+    {
+        bones.clear();
+        invBindPose.clear();
+    }
+};
+
 /** Node data, since 3.3 */
 struct NodeData
 {
@@ -70,27 +89,14 @@ struct NodeData
             delete it;
         }
         children.clear();
+        
+        for(auto& modeldata : modelNodeDatas)
+        {
+            delete modeldata;
+        }
+        modelNodeDatas.clear();
     }
 
-};
-
-/** model node data, since 3.3 */
-struct ModelData
-{
-    std::string subMeshId;
-    std::string matrialId;
-    std::vector<std::string> bones;
-    std::vector<Mat4>        invBindPose;
-    
-    virtual ~ModelData()
-    {
-        resetData();
-    }
-    virtual void resetData()
-    {
-        bones.clear();
-        invBindPose.clear();
-    }
 };
 
 /** node datas, since 3.3 */
@@ -122,11 +128,16 @@ struct MeshData
     int vertexSizeInFloat;
     std::vector<IndexArray> subMeshIndices;
     std::vector<std::string> subMeshIds; //subMesh Names (since 3.3)
+    std::vector<AABB> subMeshAABB;
     int numIndex;
     std::vector<MeshVertexAttrib> attribs;
     int attribCount;
 
 public:
+    /**
+     * Get per vertex size
+     * @return return the sum of each vertex's all attribute size.
+     */
     int getPerVertexSize() const
     {
         int vertexsize = 0;
@@ -136,10 +147,15 @@ public:
         }
         return vertexsize;
     }
+
+    /**
+     * Reset the data
+     */
     void resetData()
     {
         vertex.clear();
         subMeshIndices.clear();
+        subMeshAABB.clear();
         attribs.clear();
         vertexSizeInFloat = 0;
         numIndex = 0;
@@ -364,10 +380,10 @@ public:
     }
     
     Animation3DData(const Animation3DData& other)
-    : _totalTime(other._totalTime)
-    , _translationKeys(other._translationKeys)
+    : _translationKeys(other._translationKeys)
     , _rotationKeys(other._rotationKeys)
     , _scaleKeys(other._scaleKeys)
+    , _totalTime(other._totalTime)
     {
     }
     

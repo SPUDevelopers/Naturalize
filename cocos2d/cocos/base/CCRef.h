@@ -34,26 +34,31 @@ THE SOFTWARE.
 NS_CC_BEGIN
 
 /**
- * @addtogroup base_nodes
+ * @addtogroup base
  * @{
  */
 
 class Ref;
 
-/** Interface that defines how to clone an Ref */
+/** 
+  * Interface that defines how to clone an Ref.
+  * @lua NA
+  * @js NA
+  */
 class CC_DLL Clonable
 {
 public:
-    /** returns a copy of the Ref */
+    /** Returns a copy of the Ref. */
     virtual Clonable* clone() const = 0;
+    
     /**
      * @js NA
      * @lua NA
      */
     virtual ~Clonable() {};
 
-    /** returns a copy of the Ref.
-     * @deprecated Use clone() instead
+    /** Returns a copy of the Ref.
+     * @deprecated Use clone() instead.
      */
     CC_DEPRECATED_ATTRIBUTE Ref* copy() const
     {
@@ -63,6 +68,11 @@ public:
     }
 };
 
+/**
+ * Ref is used for reference count manangement. If a class inherits from Ref,
+ * then it is easy to be shared in different places.
+ * @js NA
+ */
 class CC_DLL Ref
 {
 public:
@@ -125,6 +135,8 @@ protected:
 
 public:
     /**
+     * Destructor
+     *
      * @js NA
      * @lua NA
      */
@@ -146,8 +158,8 @@ public:
     void* _scriptObject;
 #endif
 
-    // Memory leak diagnostic data (only included when CC_USE_MEM_LEAK_DETECTION is defined and its value isn't zero)
-#if CC_USE_MEM_LEAK_DETECTION
+    // Memory leak diagnostic data (only included when CC_REF_LEAK_DETECTION is defined and its value isn't zero)
+#if CC_REF_LEAK_DETECTION
 public:
     static void printLeaks();
 #endif
@@ -178,8 +190,8 @@ typedef void (Ref::*SEL_SCHEDULE)(float);
 #define schedule_selector(_SELECTOR) CC_SCHEDULE_SELECTOR(_SELECTOR)
 
 
-// end of base_nodes group
-/// @}
+// end of base group
+/** @} */
 
 NS_CC_END
 

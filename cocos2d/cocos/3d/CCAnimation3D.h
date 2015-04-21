@@ -70,18 +70,18 @@ public:
     Curve* getBoneCurveByName(const std::string& name) const;
     
 CC_CONSTRUCTOR_ACCESS:
-    
     Animation3D();
     virtual ~Animation3D();  
     /**init Animation3D from bundle data*/
     bool init(const Animation3DData& data);
     
+    /**init Animation3D with file name and animation name*/
+    bool initWithFile(const std::string& filename, const std::string& animationName);
+    
 protected:
-    
     std::unordered_map<std::string, Curve*> _boneCurves;//bone curves map, key bone name, value AnimationCurve
-    
-    
-    float             _duration; //animation duration
+
+    float _duration; //animation duration
 };
 
 /**

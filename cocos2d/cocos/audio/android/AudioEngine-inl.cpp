@@ -24,6 +24,7 @@
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 #include "AudioEngine-inl.h"
 
+#include <unistd.h>
 // for native asset manager
 #include <sys/types.h>
 #include <android/asset_manager.h>
@@ -37,6 +38,7 @@
 #include "base/CCDirector.h"
 #include "base/CCScheduler.h"
 #include "platform/android/CCFileUtils-android.h"
+#include "platform/android/jni/CocosPlayClient.h"
 
 using namespace cocos2d;
 using namespace cocos2d::experimental;
@@ -46,7 +48,15 @@ void PlayOverEvent(SLPlayItf caller, void* context, SLuint32 playEvent)
     if (context && playEvent == SL_PLAYEVENT_HEADATEND)
     {
         AudioPlayer* player = (AudioPlayer*)context;
-        player->_playOver = true;
+        //fix issue#8965:AudioEngine can't looping audio on Android 2.3.x
+        if (player->_loop)
+        {
+            (*(player->_fdPlayerPlay))->SetPlayState(player->_fdPlayerPlay, SL_PLAYSTATE_PLAYING);
+        }
+        else
+        {
+            player->_playOver = true;
+        }
     }
 }
 
@@ -55,6 +65,8 @@ AudioPlayer::AudioPlayer()
     , _finishCallback(nullptr)
     , _duration(0.0f)
     , _playOver(false)
+    , _loop(false)
+    , _assetFd(0)
 {
 
 }
@@ -68,6 +80,11 @@ AudioPlayer::~AudioPlayer()
         _fdPlayerPlay = nullptr;
         _fdPlayerVolume = nullptr;
         _fdPlayerSeek = nullptr;
+    }
+    if(_assetFd > 0)
+    {
+        close(_assetFd);
+        _assetFd = 0;
     }
 }
 
@@ -100,15 +117,15 @@ bool AudioPlayer::init(SLEngineItf engineEngine, SLObjectItf outputMixObject,con
 
             // open asset as file descriptor
             off_t start, length;
-            int fd = AAsset_openFileDescriptor(asset, &start, &length);
-            if (fd <= 0){
+            _assetFd = AAsset_openFileDescriptor(asset, &start, &length);
+            if (_assetFd <= 0){
                 AAsset_close(asset);
                 break;
             }
             AAsset_close(asset);
 
             // configure audio source
-            loc_fd = {SL_DATALOCATOR_ANDROIDFD, fd, start, length};
+            loc_fd = {SL_DATALOCATOR_ANDROIDFD, _assetFd, start, length};
 
             audioSrc.pLocator = &loc_fd;
         }
@@ -143,6 +160,7 @@ bool AudioPlayer::init(SLEngineItf engineEngine, SLObjectItf outputMixObject,con
         result = (*_fdPlayerObject)->GetInterface(_fdPlayerObject, SL_IID_VOLUME, &_fdPlayerVolume);
         if(SL_RESULT_SUCCESS != result){ ERRORLOG("get the volume interface fail"); break; }
 
+        _loop = loop;
         if (loop){
             (*_fdPlayerSeek)->SetLoop(_fdPlayerSeek, SL_BOOLEAN_TRUE, 0, SL_TIME_UNKNOWN);
         }
@@ -219,7 +237,7 @@ bool AudioEngineImpl::init()
 
 int AudioEngineImpl::play2d(const std::string &filePath ,bool loop ,float volume)
 {
-    auto audioId = AudioEngine::INVAILD_AUDIO_ID;
+    auto audioId = AudioEngine::INVALID_AUDIO_ID;
 
     do 
     {
@@ -227,12 +245,15 @@ int AudioEngineImpl::play2d(const std::string &filePath ,bool loop ,float volume
             break;
 
         auto& player = _audioPlayers[currentAudioID];
-        auto initPlayer = player.init( _engineEngine, _outputMixObject, FileUtils::getInstance()->fullPathForFilename(filePath), volume, loop);
+        auto fullPath = FileUtils::getInstance()->fullPathForFilename(filePath);
+        cocosplay::updateAssets(fullPath);
+        auto initPlayer = player.init(_engineEngine, _outputMixObject, fullPath, volume, loop);
         if (!initPlayer){
             _audioPlayers.erase(currentAudioID);
             log("%s,%d message:create player for %s fail", __func__, __LINE__, filePath.c_str());
             break;
         }
+        cocosplay::notifyFileLoaded(fullPath);
 
         audioId = currentAudioID++;
         player._audioID = audioId;
@@ -286,13 +307,14 @@ void AudioEngineImpl::setVolume(int audioID,float volume)
     }
     auto result = (*player._fdPlayerVolume)->SetVolumeLevel(player._fdPlayerVolume, dbVolume);
     if(SL_RESULT_SUCCESS != result){
-        log("%s error:%lu",__func__, result);
+        log("%s error:%u",__func__, result);
     }
 }
 
 void AudioEngineImpl::setLoop(int audioID, bool loop)
 {
     auto& player = _audioPlayers[audioID];
+    player._loop = loop;
     SLboolean loopEnabled = SL_BOOLEAN_TRUE;
     if (!loop){
         loopEnabled = SL_BOOLEAN_FALSE;
@@ -305,7 +327,7 @@ void AudioEngineImpl::pause(int audioID)
     auto& player = _audioPlayers[audioID];
     auto result = (*player._fdPlayerPlay)->SetPlayState(player._fdPlayerPlay, SL_PLAYSTATE_PAUSED);
     if(SL_RESULT_SUCCESS != result){
-        log("%s error:%lu",__func__, result);
+        log("%s error:%u",__func__, result);
     }
 }
 
@@ -314,7 +336,7 @@ void AudioEngineImpl::resume(int audioID)
     auto& player = _audioPlayers[audioID];
     auto result = (*player._fdPlayerPlay)->SetPlayState(player._fdPlayerPlay, SL_PLAYSTATE_PLAYING);
     if(SL_RESULT_SUCCESS != result){
-        log("%s error:%lu",__func__, result);
+        log("%s error:%u",__func__, result);
     }
 }
 
@@ -323,7 +345,7 @@ void AudioEngineImpl::stop(int audioID)
     auto& player = _audioPlayers[audioID];
     auto result = (*player._fdPlayerPlay)->SetPlayState(player._fdPlayerPlay, SL_PLAYSTATE_STOPPED);
     if(SL_RESULT_SUCCESS != result){
-        log("%s error:%lu",__func__, result);
+        log("%s error:%u",__func__, result);
     }
 
     _audioPlayers.erase(audioID);

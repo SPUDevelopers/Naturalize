@@ -25,6 +25,8 @@ THE SOFTWARE.
 ****************************************************************************/
 #include "2d/CCProgressTimer.h"
 
+#include <algorithm>
+
 #include "base/ccMacros.h"
 #include "base/CCDirector.h"
 #include "2d/CCSprite.h"
@@ -159,7 +161,7 @@ Tex2F ProgressTimer::textureCoordFromAlphaPoint(Vec2 alpha)
     Vec2 max = Vec2(quad.tr.texCoords.u,quad.tr.texCoords.v);
     //  Fix bug #1303 so that progress timer handles sprite frame texture rotation
     if (_sprite->isTextureRectRotated()) {
-        CC_SWAP(alpha.x, alpha.y, float);
+        std::swap(alpha.x, alpha.y);
     }
     return Tex2F(min.x * (1.f - alpha.x) + max.x * alpha.x, min.y * (1.f - alpha.y) + max.y * alpha.y);
 }
@@ -535,7 +537,7 @@ void ProgressTimer::draw(Renderer *renderer, const Mat4 &transform, uint32_t fla
     if( ! _vertexData || ! _sprite)
         return;
 
-    _customCommand.init(_globalZOrder);
+    _customCommand.init(_globalZOrder, transform, flags);
     _customCommand.func = CC_CALLBACK_0(ProgressTimer::onDraw, this, transform, flags);
     renderer->addCommand(&_customCommand);
 }

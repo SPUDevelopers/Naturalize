@@ -33,8 +33,8 @@ static int PALETTE_ROWS = 3;
 
 MeshSkin::MeshSkin()
 : _rootBone(nullptr)
-, _matrixPalette(nullptr)
 , _skeleton(nullptr)
+, _matrixPalette(nullptr)
 {
     
 }
@@ -70,7 +70,7 @@ ssize_t MeshSkin::getBoneCount() const
 //get bone
 Bone3D* MeshSkin::getBoneByIndex(unsigned int index) const
 {
-    if (index < _skinBones.size())
+    if (static_cast<int>(index) < _skinBones.size())
         return _skinBones.at(index);
     
     return nullptr;

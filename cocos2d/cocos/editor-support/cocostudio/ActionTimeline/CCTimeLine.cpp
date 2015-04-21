@@ -145,11 +145,7 @@ void Timeline::binarySearchKeyFrame(int frameIndex)
                 needEnterFrame = true;
 
             _fromIndex = 0;
-
-            if(length > 1)
-                _toIndex = 1;
-            else
-                _toIndex = 0;
+            _toIndex = 0;
             
             from = to = _frames.at(0);
             _currentKeyFrameIndex = 0;
@@ -202,7 +198,7 @@ void Timeline::binarySearchKeyFrame(int frameIndex)
     if(needEnterFrame || _currentKeyFrame != from)
     {
         _currentKeyFrame = from;
-        _currentKeyFrame->onEnter(to);
+        _currentKeyFrame->onEnter(to, frameIndex);
     }
 }
 
@@ -252,7 +248,7 @@ void Timeline::updateCurrentKeyFrame(int frameIndex)
                 if(frameIndex > from->getFrameIndex() && frameIndex < to->getFrameIndex())
                     break;
                 if(from->isEnterWhenPassed())
-                    from->onEnter(to);
+                    from->onEnter(to, from->getFrameIndex());
             }
             while (true);
 
@@ -264,7 +260,7 @@ void Timeline::updateCurrentKeyFrame(int frameIndex)
         } while (0);
 
         _currentKeyFrame = from;
-        _currentKeyFrame->onEnter(to);
+        _currentKeyFrame->onEnter(to, frameIndex);
         
     }
 }

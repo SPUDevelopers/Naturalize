@@ -1,5 +1,6 @@
 /**
  Copyright 2013 BlackBerry Inc.
+ Copyright (c) 2014-2015 Chukong Technologies
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -419,14 +420,25 @@ public:
      */
     inline const Vec3 operator/(float s) const;
 
-    /**
-     * Determines if this vector is less than the given vector.
-     * 
-     * @param v The vector to compare against.
-     * 
-     * @return True if this vector is less than the given vector, false otherwise.
+    /** Returns true if the vector's scalar components are all greater
+     that the ones of the vector it is compared against.
      */
-    inline bool operator<(const Vec3& v) const;
+    inline bool operator < (const Vec3& rhs) const
+    {
+        if (x < rhs.x && y < rhs.y && z < rhs.z)
+            return true;
+        return false;
+    }
+
+    /** Returns true if the vector's scalar components are all smaller
+     that the ones of the vector it is compared against.
+     */
+    inline bool operator >(const Vec3& rhs) const
+    {
+        if (x > rhs.x && y > rhs.y && z > rhs.z)
+            return true;
+        return false;
+    }
 
     /**
      * Determines if this vector is equal to the given vector.

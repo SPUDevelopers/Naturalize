@@ -38,14 +38,47 @@ JNIEXPORT void JNICALL Java_org_cocos2dx_plugin_UserFacebook_nativeRequestCallba
 }
 
 static FacebookAgent* s_sharedFacebookAgent = nullptr;
+static const char*  s_cocos2dxVersion = "3.18.0/cocos2d-x-3.4";
+static const char*  s_cocos2dxLuaVersion = "3.18.0/cocos2d-x-lua-3.4";
+static const char*  s_cocos2dxJsVersion  = "3.18.0/cocos2d-js-3.3";
 
 FacebookAgent* FacebookAgent::getInstance()
 {
 	if(nullptr == s_sharedFacebookAgent)
 	{
-		s_sharedFacebookAgent = new FacebookAgent();
+		s_sharedFacebookAgent = new (std::nothrow)FacebookAgent();
+		if (nullptr != s_sharedFacebookAgent)
+        {
+            s_sharedFacebookAgent->setSDKVersion(s_cocos2dxVersion);
+        }
 	}
 	return s_sharedFacebookAgent;
+}
+
+FacebookAgent* FacebookAgent::getInstanceLua()
+{
+    if(nullptr == s_sharedFacebookAgent)
+    {
+        s_sharedFacebookAgent = new (std::nothrow)FacebookAgent();
+        if (nullptr != s_sharedFacebookAgent)
+        {
+            s_sharedFacebookAgent->setSDKVersion(s_cocos2dxLuaVersion);
+        }
+    }
+    return s_sharedFacebookAgent;
+}
+
+FacebookAgent* FacebookAgent::getInstanceJs()
+{
+    if(nullptr == s_sharedFacebookAgent)
+    {
+        s_sharedFacebookAgent = new (std::nothrow)FacebookAgent();
+        if (nullptr != s_sharedFacebookAgent)
+        {
+            s_sharedFacebookAgent->setSDKVersion(s_cocos2dxJsVersion);
+        }
+    }
+    return s_sharedFacebookAgent;
 }
 
 void FacebookAgent::destroyInstance()
@@ -202,6 +235,13 @@ void FacebookAgent::appRequest(FBInfo& info, FBCallback cb)
 
 std::string FacebookAgent::getSDKVersion()
 {
-	return std::string("Facebook SDK beta2");
+	return agentManager->getUserPlugin()->callStringFuncWithParam("getSDKVersion", NULL);
 }
+
+void FacebookAgent::setSDKVersion(std::string version)
+{
+	PluginParam _version(version.c_str());
+	agentManager->getUserPlugin()->callFuncWithParam("setSDKVersion", &_version, NULL);
+}
+
 }}

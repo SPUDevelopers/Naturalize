@@ -36,7 +36,6 @@
 #include "base/CCEventListenerCustom.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventCustom.h"
-
 #include "deprecated/CCString.h"
 
 NS_CC_BEGIN
@@ -235,45 +234,57 @@ bool Label::setCharMap(const std::string& charMapFile, int itemWidth, int itemHe
 
 Label::Label(FontAtlas *atlas /* = nullptr */, TextHAlignment hAlignment /* = TextHAlignment::LEFT */, 
              TextVAlignment vAlignment /* = TextVAlignment::TOP */,bool useDistanceField /* = false */,bool useA8Shader /* = false */)
-: _reusedLetter(nullptr)
-, _commonLineHeight(0.0f)
+: _isOpacityModifyRGB(false)
+, _contentDirty(false)
+, _fontAtlas(atlas)
+, _textSprite(nullptr)
+, _compatibleMode(false)
+, _reusedLetter(nullptr)
 , _additionalKerning(0.0f)
+, _commonLineHeight(0.0f)
 , _lineBreakWithoutSpaces(false)
-, _maxLineWidth(0)
-, _labelWidth(0)
-, _labelHeight(0)
+, _horizontalKernings(nullptr)
+, _maxLineWidth(0.0f)
 , _labelDimensions(Size::ZERO)
+, _labelWidth(0.0f)
+, _labelHeight(0.0f)
 , _hAlignment(hAlignment)
 , _vAlignment(vAlignment)
-, _horizontalKernings(nullptr)
-, _fontAtlas(atlas)
-, _isOpacityModifyRGB(false)
+, _currNumLines(-1)
+, _fontScale(1.0f)
 , _useDistanceField(useDistanceField)
 , _useA8Shader(useA8Shader)
-, _fontScale(1.0f)
-, _uniformEffectColor(0)
-, _currNumLines(-1)
-, _textSprite(nullptr)
-, _contentDirty(false)
-, _shadowDirty(false)
-, _compatibleMode(false)
-, _insideBounds(true)
 , _effectColorF(Color4F::BLACK)
+, _uniformEffectColor(0)
+, _shadowDirty(false)
+, _insideBounds(true)
 {
     setAnchorPoint(Vec2::ANCHOR_MIDDLE);
     reset();
 
-    auto purgeTextureListener = EventListenerCustom::create(FontAtlas::EVENT_PURGE_TEXTURES, [this](EventCustom* event){
+    auto purgeTextureListener = EventListenerCustom::create(FontAtlas::CMD_PURGE_FONTATLAS, [this](EventCustom* event){
         if (_fontAtlas && _currentLabelType == LabelType::TTF && event->getUserData() == _fontAtlas)
         {
             Node::removeAllChildrenWithCleanup(true);
             _batchNodes.clear();
             _batchNodes.push_back(this);
 
-            alignText();
+            if (_fontAtlas)
+            {
+                FontAtlasCache::releaseFontAtlas(_fontAtlas);
+            }
         }
     });
     _eventDispatcher->addEventListenerWithSceneGraphPriority(purgeTextureListener, this);
+    
+    auto resetTextureListener = EventListenerCustom::create(FontAtlas::CMD_RESET_FONTATLAS, [this](EventCustom* event){
+        if (_fontAtlas && _currentLabelType == LabelType::TTF && event->getUserData() == _fontAtlas)
+        {
+            _fontAtlas = nullptr;
+            this->setTTFConfig(_fontConfig);
+        }
+    });
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(resetTextureListener, this);
 }
 
 Label::~Label()
@@ -395,7 +406,13 @@ void Label::setFontAtlas(FontAtlas* atlas,bool distanceFieldEnabled /* = false *
         _commonLineHeight = _fontAtlas->getCommonLineHeight();
         _contentDirty = true;
     }
+#if CC_TARGET_PLATFORM != CC_PLATFORM_WP8
     _useDistanceField = distanceFieldEnabled;
+#else
+    // some older Windows Phones cannot run the ccShader_Label_df.frag program
+    // so we must disable distance field
+    _useDistanceField = false;
+#endif
     _useA8Shader = useA8Shader;
 
     if (_currentLabelType != LabelType::TTF)
@@ -483,7 +500,7 @@ void Label::setAlignment(TextHAlignment hAlignment,TextVAlignment vAlignment)
     }
 }
 
-void Label::setMaxLineWidth(unsigned int maxLineWidth)
+void Label::setMaxLineWidth(float maxLineWidth)
 {
     if (_labelWidth == 0 && _maxLineWidth != maxLineWidth)
     {
@@ -492,7 +509,7 @@ void Label::setMaxLineWidth(unsigned int maxLineWidth)
     }
 }
 
-void Label::setDimensions(unsigned int width,unsigned int height)
+void Label::setDimensions(float width, float height)
 {
     if (height != _labelHeight || width != _labelWidth)
     {
@@ -570,6 +587,7 @@ void Label::alignText()
 {
     if (_fontAtlas == nullptr || _currentUTF16String.empty())
     {
+        setContentSize(Size::ZERO);
         return;
     }
 
@@ -578,12 +596,12 @@ void Label::alignText()
         batchNode->getTextureAtlas()->removeAllQuads();
     }
     _fontAtlas->prepareLetterDefinitions(_currentUTF16String);
-    auto textures = _fontAtlas->getTextures();
+    auto& textures = _fontAtlas->getTextures();
     if (textures.size() > _batchNodes.size())
     {
         for (auto index = _batchNodes.size(); index < textures.size(); ++index)
         {
-            auto batchNode = SpriteBatchNode::createWithTexture(textures[index]);
+            auto batchNode = SpriteBatchNode::createWithTexture(textures.at(index));
             batchNode->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
             batchNode->setPosition(Vec2::ZERO);
             Node::addChild(batchNode,0,Node::INVALID_TAG);
@@ -616,9 +634,9 @@ void Label::alignText()
                 uvRect.origin.x    = _lettersInfo[tag].def.U;
                 uvRect.origin.y    = _lettersInfo[tag].def.V;
 
-                letterSprite->setTexture(textures[_lettersInfo[tag].def.textureID]);
+                letterSprite->setTexture(textures.at(_lettersInfo[tag].def.textureID));
                 letterSprite->setTextureRect(uvRect);
-            }          
+            }
         }
     }
 
@@ -879,12 +897,30 @@ void Label::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
 {
     // Don't do calculate the culling if the transform was not updated
     bool transformUpdated = flags & FLAGS_TRANSFORM_DIRTY;
+#if CC_USE_CULLING
     _insideBounds = transformUpdated ? renderer->checkVisibility(transform, _contentSize) : _insideBounds;
 
-    if(_insideBounds) {
-        _customCommand.init(_globalZOrder);
+    if(_insideBounds)
+#endif
+    {
+        _customCommand.init(_globalZOrder, transform, flags);
         _customCommand.func = CC_CALLBACK_0(Label::onDraw, this, transform, transformUpdated);
+
         renderer->addCommand(&_customCommand);
+    }
+}
+
+void Label::setCameraMask(unsigned short mask, bool applyChildren)
+{
+    SpriteBatchNode::setCameraMask(mask, applyChildren);
+    
+    if (_textSprite)
+    {
+        _textSprite->setCameraMask(mask, applyChildren);
+    }
+    if (_shadowNode)
+    {
+        _shadowNode->setCameraMask(mask, applyChildren);
     }
 }
 
@@ -896,6 +932,8 @@ void Label::createSpriteWithFontDefinition()
     texture->initWithString(_originalUTF8String.c_str(),_fontDefinition);
 
     _textSprite = Sprite::createWithTexture(texture);
+    //set camera mask using label's camera mask, because _textSprite may be null when setting camera mask to label
+    _textSprite->setCameraMask(getCameraMask());
     _textSprite->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     this->setContentSize(_textSprite->getContentSize());
     texture->release();
@@ -973,6 +1011,7 @@ void Label::updateContent()
             _fontDefinition._fontFillColor.r = _textColor.r;
             _fontDefinition._fontFillColor.g = _textColor.g;
             _fontDefinition._fontFillColor.b = _textColor.b;
+            _fontDefinition._fontAlpha = _textColor.a;
 
             _fontDefinition._shadow._shadowEnabled = false;
 
@@ -983,6 +1022,7 @@ void Label::updateContent()
                 _fontDefinition._stroke._strokeColor.r = _effectColor.r;
                 _fontDefinition._stroke._strokeColor.g = _effectColor.g;
                 _fontDefinition._stroke._strokeColor.b = _effectColor.b;
+                _fontDefinition._stroke._strokeAlpha = _effectColor.a;
             }
             else
             {
@@ -1035,6 +1075,8 @@ void Label::drawTextSprite(Renderer *renderer, uint32_t parentFlags)
             {
                 _shadowNode->setBlendFunc(_blendFunc);
             }
+            //set camera mask using label's mask. Because _shadowNode may be null when setting the label's camera mask
+            _shadowNode->setCameraMask(getCameraMask());
             _shadowNode->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
             _shadowNode->setColor(_shadowColor);
             _shadowNode->setOpacity(_shadowOpacity * _displayedOpacity);
@@ -1051,7 +1093,7 @@ void Label::drawTextSprite(Renderer *renderer, uint32_t parentFlags)
 
 void Label::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
-    if (! _visible || _originalUTF8String.empty() || !isVisitableByVisitingCamera())
+    if (! _visible || _originalUTF8String.empty())
     {
         return;
     }
@@ -1079,6 +1121,11 @@ void Label::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t pare
         _transformDirty = _inverseDirty = true;
 
         _shadowDirty = false;
+    }
+
+    if (!isVisitableByVisitingCamera())
+    {
+        return;
     }
 
     // IMPORTANT:

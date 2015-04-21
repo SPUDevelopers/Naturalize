@@ -71,11 +71,9 @@ extern "C"
 #include "base/pvr.h"
 #include "base/TGAlib.h"
 
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_WP8) && (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
 #if CC_USE_WEBP
 #include "decode.h"
 #endif // CC_USE_WEBP
-#endif
 
 #include "base/ccMacros.h"
 #include "CCCommon.h"
@@ -459,7 +457,7 @@ Image::Image()
 , _width(0)
 , _height(0)
 , _unpack(false)
-, _fileType(Format::UNKOWN)
+, _fileType(Format::UNKNOWN)
 , _renderFormat(Texture2D::PixelFormat::NONE)
 , _numberOfMipmaps(0)
 , _hasPremultipliedAlpha(true)
@@ -471,7 +469,7 @@ Image::~Image()
 {
     if(_unpack)
     {
-        for (unsigned int i = 0; i < _numberOfMipmaps; ++i)
+        for (int i = 0; i < _numberOfMipmaps; ++i)
             CC_SAFE_DELETE_ARRAY(_mipmaps[i].address);
     }
     else
@@ -744,7 +742,7 @@ Image::Format Image::detectFormat(const unsigned char * data, ssize_t dataLen)
     }
     else
     {
-        return Format::UNKOWN;
+        return Format::UNKNOWN;
     }
 }
 
@@ -1727,14 +1725,17 @@ bool Image::initWithTGAData(tImageTGA* tgaData)
     
     if (ret)
     {
-        const unsigned char tgaSuffix[] = ".tga";
-        for(int i = 0; i < 4; ++i)
+        if (_filePath.length() > 0)
         {
-            if (tolower(_filePath[_filePath.length() - i - 1]) != tgaSuffix[3 - i])
+            const unsigned char tgaSuffix [] = ".tga";
+            for (int i = 0; i < 4; ++i)
             {
-                CCLOG("Image WARNING: the image file suffix is not tga, but parsed as a tga image file. FILE: %s", _filePath.c_str());
-                break;
-            };
+                if (tolower(_filePath[_filePath.length() - i - 1]) != tgaSuffix[3 - i])
+                {
+                    CCLOG("Image WARNING: the image file suffix is not tga, but parsed as a tga image file. FILE: %s", _filePath.c_str());
+                    break;
+                };
+            }
         }
     }
     else
@@ -2038,6 +2039,9 @@ bool Image::initWithWebpData(const unsigned char * data, ssize_t dataLen)
         _renderFormat = Texture2D::PixelFormat::RGBA8888;
         _width    = config.input.width;
         _height   = config.input.height;
+        
+        //webp doesn't have premultipliedAlpha
+        _hasPremultipliedAlpha = false;
         
         _dataLen = _width * _height * 4;
         _data = static_cast<unsigned char*>(malloc(_dataLen * sizeof(unsigned char)));

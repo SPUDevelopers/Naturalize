@@ -35,8 +35,6 @@ THE SOFTWARE.
 #include "deprecated/CCDictionary.h"
 #include "platform/CCFileUtils.h"
 #include "platform/CCSAXParser.h"
-#include "unzip.h"
-
 
 NS_CC_BEGIN
 
@@ -339,6 +337,11 @@ FileUtils* FileUtils::getInstance()
 
 std::string FileUtilsApple::getWritablePath() const
 {
+    if (_writablePath.length())
+    {
+        return _writablePath;
+    }
+
     // save to document folder
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];

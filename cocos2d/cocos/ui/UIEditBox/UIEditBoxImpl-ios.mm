@@ -279,9 +279,6 @@ EditBoxImplIOS::EditBoxImplIOS(EditBox* pEditText)
 , _systemControl(nullptr)
 , _maxTextLength(-1)
 {
-    auto view = cocos2d::Director::getInstance()->getOpenGLView();
-
-    _inRetinaMode = view->isRetinaDisplay();
 }
 
 EditBoxImplIOS::~EditBoxImplIOS()
@@ -305,11 +302,10 @@ bool EditBoxImplIOS::initWithSize(const Size& size)
 
         CGRect rect = CGRectMake(0, 0, size.width * glview->getScaleX(),size.height * glview->getScaleY());
 
-        if (_inRetinaMode)
-        {
-            rect.size.width /= 2.0f;
-            rect.size.height /= 2.0f;
-        }
+        CCEAGLView *eaglview = static_cast<CCEAGLView *>(glview->getEAGLView());
+        float factor = eaglview.contentScaleFactor;
+        rect.size.width /= factor;
+        rect.size.height /= factor;
         
         _systemControl = [[UIEditBoxImplIOS_objc alloc] initWithFrame:rect editBox:this];
         if (!_systemControl) break;
@@ -376,7 +372,8 @@ void EditBoxImplIOS::setFont(const char* pFontName, int fontSize)
         isValidFontName = false;
     }
 
-    float retinaFactor = _inRetinaMode ? 2.0f : 1.0f;
+    CCEAGLView *eaglview = static_cast<CCEAGLView *>(cocos2d::Director::getInstance()->getOpenGLView()->getEAGLView());
+    float retinaFactor = eaglview.contentScaleFactor;
 	NSString * fntName = [NSString stringWithUTF8String:pFontName];
 
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
@@ -399,10 +396,10 @@ void EditBoxImplIOS::setFont(const char* pFontName, int fontSize)
 	_label->setSystemFontSize(fontSize);
 }
 
-void EditBoxImplIOS::setFontColor(const Color3B& color)
+void EditBoxImplIOS::setFontColor(const Color4B& color)
 {
-    _systemControl.textField.textColor = [UIColor colorWithRed:color.r / 255.0f green:color.g / 255.0f blue:color.b / 255.0f alpha:1.0f];
-	_label->setColor(color);
+    _systemControl.textField.textColor = [UIColor colorWithRed:color.r / 255.0f green:color.g / 255.0f blue:color.b / 255.0f alpha:color.a / 255.f];
+	_label->setTextColor(color);
 }
 
 void EditBoxImplIOS::setPlaceholderFont(const char* pFontName, int fontSize)
@@ -410,10 +407,10 @@ void EditBoxImplIOS::setPlaceholderFont(const char* pFontName, int fontSize)
 	_labelPlaceHolder->setSystemFontName(pFontName);
 	_labelPlaceHolder->setSystemFontSize(fontSize);
 }
-
-void EditBoxImplIOS::setPlaceholderFontColor(const Color3B& color)
+    
+void EditBoxImplIOS::setPlaceholderFontColor(const Color4B &color)
 {
-	_labelPlaceHolder->setColor(color);
+    _labelPlaceHolder->setTextColor(color);
 }
 
 void EditBoxImplIOS::setInputMode(EditBox::InputMode inputMode)
@@ -554,7 +551,7 @@ void EditBoxImplIOS::setPlaceHolder(const char* pText)
 	_labelPlaceHolder->setString(pText);
 }
 
-static CGPoint convertDesignCoordToScreenCoord(const Vec2& designCoord, bool bInRetinaMode)
+static CGPoint convertDesignCoordToScreenCoord(const Vec2& designCoord)
 {
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     CCEAGLView *eaglview = (CCEAGLView *) glview->getEAGLView();
@@ -566,11 +563,10 @@ static CGPoint convertDesignCoordToScreenCoord(const Vec2& designCoord, bool bIn
     
     CGPoint screenPos = CGPointMake(screenGLPos.x, viewH - screenGLPos.y);
     
-    if (bInRetinaMode)
-    {
-        screenPos.x = screenPos.x / 2.0f;
-        screenPos.y = screenPos.y / 2.0f;
-    }
+    float factor = eaglview.contentScaleFactor;
+    screenPos.x = screenPos.x / factor;
+    screenPos.y = screenPos.y / factor;
+
     CCLOGINFO("[EditBox] pos x = %f, y = %f", screenGLPos.x, screenGLPos.y);
     return screenPos;
 }
@@ -594,11 +590,11 @@ void EditBoxImplIOS::setContentSize(const Size& size)
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     CGSize controlSize = CGSizeMake(size.width * glview->getScaleX(),size.height * glview->getScaleY());
     
-    if (_inRetinaMode)
-    {
-        controlSize.width /= 2.0f;
-        controlSize.height /= 2.0f;
-    }
+    CCEAGLView *eaglview = static_cast<CCEAGLView *>(glview->getEAGLView());
+    float factor = eaglview.contentScaleFactor;
+    controlSize.width /= factor;
+    controlSize.height /= factor;
+    
     [_systemControl setContentSize:controlSize];
 }
 
@@ -638,7 +634,7 @@ void EditBoxImplIOS::adjustTextFieldPosition()
     rect = RectApplyAffineTransform(rect, _editBox->nodeToWorldTransform());
 	
 	Vec2 designCoord = Vec2(rect.origin.x, rect.origin.y + rect.size.height);
-    [_systemControl setPosition:convertDesignCoordToScreenCoord(designCoord, _inRetinaMode)];
+    [_systemControl setPosition:convertDesignCoordToScreenCoord(designCoord)];
 }
 
 void EditBoxImplIOS::openKeyboard()

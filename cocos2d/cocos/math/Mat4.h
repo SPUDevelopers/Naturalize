@@ -1,5 +1,6 @@
 /**
  Copyright 2013 BlackBerry Inc.
+ Copyright (c) 2014-2015 Chukong Technologies
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -20,6 +21,8 @@
 
 #ifndef MATH_MAT4_H
 #define MATH_MAT4_H
+
+#include "base/ccMacros.h"
 
 #include "math/Vec3.h"
 #include "math/Vec4.h"
@@ -761,7 +764,7 @@ public:
      *
      * @param point The point to transform and also a vector to hold the result in.
      */
-    void transformPoint(Vec3* point) const;
+    inline void transformPoint(Vec3* point) const { GP_ASSERT(point); transformVector(point->x, point->y, point->z, 1.0f, point); }
 
     /**
      * Transforms the specified point by this matrix, and stores
@@ -770,7 +773,7 @@ public:
      * @param point The point to transform.
      * @param dst A vector to store the transformed point in.
      */
-    void transformPoint(const Vec3& point, Vec3* dst) const;
+    inline void transformPoint(const Vec3& point, Vec3* dst) const { GP_ASSERT(dst); transformVector(point.x, point.y, point.z, 1.0f, dst); }
 
     /**
      * Transforms the specified vector by this matrix by

@@ -36,14 +36,14 @@ using namespace std;
 NS_CC_BEGIN
 
 Mesh::Mesh()
-: _visible(true)
-, _texture(nullptr)
+: _texture(nullptr)
 , _skin(nullptr)
+, _visible(true)
+, _isTransparent(false)
 , _meshIndexData(nullptr)
-, _visibleChanged(nullptr)
 , _glProgramState(nullptr)
 , _blend(BlendFunc::ALPHA_NON_PREMULTIPLIED)
-, _isTransparent(false)
+, _visibleChanged(nullptr)
 {
     
 }
@@ -196,7 +196,7 @@ void Mesh::setSkin(MeshSkin* skin)
         CC_SAFE_RETAIN(skin);
         CC_SAFE_RELEASE(_skin);
         _skin = skin;
-        calcuateAABB();
+        calculateAABB();
     }
 }
 
@@ -207,7 +207,7 @@ void Mesh::setMeshIndexData(MeshIndexData* subMesh)
         CC_SAFE_RETAIN(subMesh);
         CC_SAFE_RELEASE(_meshIndexData);
         _meshIndexData = subMesh;
-        calcuateAABB();
+        calculateAABB();
         bindMeshCommand();
     }
 }
@@ -223,7 +223,7 @@ void Mesh::setGLProgramState(GLProgramState* glProgramState)
     }
 }
 
-void Mesh::calcuateAABB()
+void Mesh::calculateAABB()
 {
     if (_meshIndexData)
     {

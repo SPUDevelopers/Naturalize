@@ -81,13 +81,13 @@ Ref::~Ref()
 
 void Ref::retain()
 {
-    CCASSERT(_referenceCount > 0, "reference count should greater than 0");
+    CCASSERT(_referenceCount > 0, "reference count should be greater than 0");
     ++_referenceCount;
 }
 
 void Ref::release()
 {
-    CCASSERT(_referenceCount > 0, "reference count should greater than 0");
+    CCASSERT(_referenceCount > 0, "reference count should be greater than 0");
     --_referenceCount;
 
     if (_referenceCount == 0)
@@ -189,7 +189,7 @@ static void untrackRef(Ref* ref)
     __refAllocationList.erase(iter);
 }
 
-#endif // #if CC_USE_MEM_LEAK_DETECTION
+#endif // #if CC_REF_LEAK_DETECTION
 
 
 NS_CC_END

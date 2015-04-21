@@ -32,6 +32,10 @@ THE SOFTWARE.
 
 NS_CC_BEGIN
 
+/**
+ * @addtogroup ui
+ * @{
+ */
 namespace ui {
     
     class Widget;
@@ -44,28 +48,31 @@ class CC_GUI_DLL Helper
 {
 public:
     /**
-     * Finds a widget whose tag equals to param tag from root widget.
-     *
-     * @param root      widget which will be seeked.
-     *
-     * @tag             tag value.
-     *
-     * @return finded result.
+     * Find a widget with a specific tag from root widget.
+     * This search will be recursive throught all child widgets.
+     * @param root      The be seached root widget.
+     * @param tag       The widget tag.
+     * @return Widget instance pointer.
      */
     static Widget* seekWidgetByTag(Widget* root, int tag);
     
     /**
-     * Finds a widget whose name equals to param name from root widget.
+     * Find a widget with a specific name from root widget.
+     * This search will be recursive throught all child widgets.
      *
-     * @param root      widget which will be seeked.
-     *
-     * @name             name value.
-     *
-     * @return finded result.
+     * @param root      The be searched root widget.
+     * @param name      The widget name.
+     * @return Widget isntance pointer.
      */
     static Widget* seekWidgetByName(Widget* root, const std::string& name);
     
-    /*temp action*/
+    /**
+     * Find a widget with a specific action tag from root widget
+     * This search will be recursive throught all child widgets.
+     *@param root The be searched root widget.
+     *@param tag The widget action's tag.
+     *@return Widget instance pointer.
+     */
     static Widget* seekActionWidgetByActionTag(Widget* root, int tag);
     
     /**
@@ -79,12 +86,33 @@ public:
                                    std::string::size_type start,
                                    std::string::size_type length);
     
+    /**
+     * Refresh object and it's children layout state
+     *
+     *@param rootNode   A Node* or Node* descendant instance pointer.
+     *
+     */
     static void doLayout(Node *rootNode);
 
-    static void changeLayoutSystemActiveState(bool bActive);
+    /**
+     *  Change the active property of Layout's @see `LayoutComponent`
+     *@param active A boolean value.
+     */
+    static void changeLayoutSystemActiveState(bool active);
+    
+    /**
+     *@brief  restrict capInsetSize, when the capInsets's width is larger than the textureSize, it will restrict to 0,
+     *        the height goes the same way as width.
+     *@param  capInsets A user defined capInsets.
+     *@param  textureSize  The size of a scale9enabled texture
+     *@return a restricted capInset.
+     */
+    static Rect restrictCapInsetRect(const Rect& capInsets, const Size& textureSize);
 };
 }
 
+// end of ui group
+/// @}
 NS_CC_END
 
 #endif /* defined(__CocoGUI__UISystem__) */

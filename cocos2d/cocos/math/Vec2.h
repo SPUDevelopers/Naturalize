@@ -1,5 +1,6 @@
 /**
  Copyright 2013 BlackBerry Inc.
+ Copyright (c) 2014-2015 Chukong Technologies
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -418,6 +419,15 @@ public:
      * @return True if this vector is less than the given vector, false otherwise.
      */
     inline bool operator<(const Vec2& v) const;
+    
+    /**
+     * Determines if this vector is greater than the given vector.
+     *
+     * @param v The vector to compare against.
+     *
+     * @return True if this vector is greater than the given vector, false otherwise.
+     */
+    inline bool operator>(const Vec2& v) const;
 
     /**
      * Determines if this vector is equal to the given vector.

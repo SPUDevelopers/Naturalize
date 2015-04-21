@@ -38,6 +38,9 @@ NS_CC_BEGIN
 #include "ccShader_PositionColor.vert"
 
 //
+#include "ccShader_PositionColorTextureAsPointsize.vert"
+
+//
 #include "ccShader_PositionTexture.frag"
 #include "ccShader_PositionTexture.vert"
 
@@ -77,5 +80,7 @@ NS_CC_BEGIN
 #include "ccShader_3D_PositionNormalTex.vert"
 #include "ccShader_3D_ColorNormal.frag"
 #include "ccShader_3D_ColorNormalTex.frag"
+#include "ccShader_3D_Particle.vert"
+#include "ccShader_3D_Particle.frag"
 
 NS_CC_END
